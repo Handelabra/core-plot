@@ -149,6 +149,11 @@ typedef enum _CPTAxisLabelingPolicy {
 @property (nonatomic, readwrite, retain) NSSet *minorTickAxisLabels;
 @property (nonatomic, readonly, assign) BOOL needsRelabel;
 @property (nonatomic, readwrite, retain) NSArray *labelExclusionRanges;
+
+// HACK: properties for messing with the axis labels. 
+@property (nonatomic, readwrite, assign) CGFloat labelValueOffset; 
+@property (nonatomic, readwrite, assign) CGFloat labelValueFactor;
+
 ///	@}
 
 /// @name Major Ticks

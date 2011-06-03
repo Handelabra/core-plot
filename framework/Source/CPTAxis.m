@@ -152,6 +152,8 @@ double niceNum(double x, BOOL round);
  **/
 @synthesize labelOffset;
 
+@synthesize labelValueFactor;
+
 /**	@property minorTickLabelOffset
  *	@brief The offset distance between the minor tick marks and labels.
  **/
@@ -183,6 +185,8 @@ double niceNum(double x, BOOL round);
  *	@brief The text style used to draw the label text.
  **/
 @synthesize labelTextStyle;
+
+@synthesize labelValueOffset;
 
 /**	@property minorTickLabelTextStyle
  *	@brief The text style used to draw the label text of minor tick labels.
@@ -398,6 +402,7 @@ double niceNum(double x, BOOL round);
 		mutableBackgroundLimitBands = nil;
 		minorGridLines = nil;
 		majorGridLines = nil;
+    labelValueFactor = 1.0;
 		
 		self.needsDisplayOnBoundsChange = YES;
 	}
@@ -454,6 +459,7 @@ double niceNum(double x, BOOL round);
 		mutableBackgroundLimitBands = [theLayer->mutableBackgroundLimitBands retain];
 		minorGridLines = theLayer->minorGridLines;
 		majorGridLines = theLayer->majorGridLines;
+    labelValueFactor = 1.0;
 	}
 	return self;
 }
@@ -876,7 +882,12 @@ double niceNum(double x, BOOL round)
 		newAxisLabel.alignment = theLabelAlignment;
 		
 		if ( needsNewContentLayer || theLabelFormatterChanged ) {
-			NSString *labelString = [theLabelFormatter stringForObjectValue:tickLocation];
+
+      // HACK: mess with the axis labels using offset properties. 
+      CGFloat offsetLabelValue = [tickLocation floatValue] * self.labelValueFactor + self.labelValueOffset; 
+      NSNumber *offsetLabelNumber = [NSNumber numberWithFloat:offsetLabelValue]; 
+      NSString *labelString = [theLabelFormatter stringForObjectValue:offsetLabelNumber];
+
 			CPTTextLayer *newLabelLayer = [[CPTTextLayer alloc] initWithText:labelString style:theLabelTextStyle];
 			[oldAxisLabel.contentLayer removeFromSuperlayer];
 			newAxisLabel.contentLayer = newLabelLayer;
