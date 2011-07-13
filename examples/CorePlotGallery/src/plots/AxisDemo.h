@@ -7,12 +7,9 @@
 //
 
 #import "PlotItem.h"
-#import "PlotGallery.h"
 
-@interface AxisDemo : PlotItem <CPTPlotSpaceDelegate,
-                                CPTPlotDataSource>
+@interface AxisDemo : PlotItem
 {
-    NSMutableArray *plotData;
 }
 
 @end

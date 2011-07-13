@@ -5,6 +5,7 @@
 #import "CPTColor.h"
 #import "CPTMutableLineStyle.h"
 #import "CPTFill.h"
+#import "CPTPathExtensions.h"
 #import "CPTPlotArea.h"
 #import "CPTPlotRange.h"
 #import "CPTPlotSpaceAnnotation.h"
@@ -13,6 +14,7 @@
 #import "CPTExceptions.h"
 #import "CPTTextLayer.h"
 #import "CPTMutableTextStyle.h"
+#import "CPTLegend.h"
 
 NSString * const CPTBarPlotBindingBarLocations = @"barLocations";	///< Bar locations.
 NSString * const CPTBarPlotBindingBarTips = @"barTips";				///< Bar tips.
@@ -338,7 +340,7 @@ NSString * const CPTBarPlotBindingBarBases = @"barBases";			///< Bar bases.
 		length = ( coordinate == CPTCoordinateX ? displacedPoint.x - originPoint.x : displacedPoint.y - originPoint.y );
     }
     else {
-        length = CPTDecimalFloatValue(decimalLength);
+        length = CPTDecimalCGFloatValue(decimalLength);
     }
     return length;
 }
@@ -347,7 +349,7 @@ NSString * const CPTBarPlotBindingBarBases = @"barBases";			///< Bar bases.
 {
     double length;
     if ( barWidthsAreInViewCoordinates ) {
-    	CGFloat floatLength = CPTDecimalFloatValue(decimalLength);
+    	CGFloat floatLength = CPTDecimalCGFloatValue(decimalLength);
         CGPoint originViewPoint = CGPointZero;
         CGPoint displacedViewPoint = CGPointMake(floatLength, floatLength);
         double originPlotPoint[2], displacedPlotPoint[2];
@@ -365,7 +367,7 @@ NSString * const CPTBarPlotBindingBarBases = @"barBases";			///< Bar bases.
 {
     NSDecimal length;
     if ( barWidthsAreInViewCoordinates ) {
-    	CGFloat floatLength = CPTDecimalFloatValue(decimalLength);
+    	CGFloat floatLength = CPTDecimalCGFloatValue(decimalLength);
         CGPoint originViewPoint = CGPointZero;
         CGPoint displacedViewPoint = CGPointMake(floatLength, floatLength);
         NSDecimal originPlotPoint[2], displacedPlotPoint[2];
@@ -621,6 +623,43 @@ NSString * const CPTBarPlotBindingBarBases = @"barBases";			///< Bar bases.
 	}
 }
 
+-(void)drawSwatchForLegend:(CPTLegend *)legend atIndex:(NSUInteger)index inRect:(CGRect)rect inContext:(CGContextRef)context
+{
+	[super drawSwatchForLegend:legend atIndex:index inRect:rect inContext:context];
+	
+	CPTFill *theFill = self.fill;
+	CPTLineStyle *theLineStyle = self.lineStyle;
+	
+	if ( theFill || theLineStyle ) {
+		CGPathRef swatchPath;
+		CGFloat radius = self.barCornerRadius;
+		if ( radius > 0.0 ) {
+			radius = MIN(MIN(radius, rect.size.width / 2.0), rect.size.height / 2.0);
+			swatchPath = CreateRoundedRectPath(rect, radius);
+		}
+		else {
+			CGMutablePathRef mutablePath = CGPathCreateMutable();
+			CGPathAddRect(mutablePath, NULL, rect);
+			swatchPath = mutablePath;
+		}
+		
+		if ( theFill ) {
+			CGContextBeginPath(context);
+			CGContextAddPath(context, swatchPath);
+			[theFill fillPathInContext:context];
+		}
+		
+		if ( theLineStyle ) {
+			[theLineStyle setLineStyleInContext:context];
+			CGContextBeginPath(context);
+			CGContextAddPath(context, swatchPath);
+			CGContextStrokePath(context);
+		}
+		
+		CGPathRelease(swatchPath);
+	}
+}
+
 #pragma mark -
 #pragma mark Data Labels
 
@@ -752,6 +791,7 @@ NSString * const CPTBarPlotBindingBarBases = @"barBases";			///< Bar bases.
         [lineStyle release];
         lineStyle = [newLineStyle copy];
         [self setNeedsDisplay];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
     }
 }
 
@@ -761,6 +801,7 @@ NSString * const CPTBarPlotBindingBarBases = @"barBases";			///< Bar bases.
         [fill release];
         fill = [newFill copy];
         [self setNeedsDisplay];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
     }
 }
 
@@ -781,6 +822,7 @@ NSString * const CPTBarPlotBindingBarBases = @"barBases";			///< Bar bases.
     if ( barCornerRadius != newCornerRadius) {
         barCornerRadius = ABS(newCornerRadius);
         [self setNeedsDisplay];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
     }
 }
 

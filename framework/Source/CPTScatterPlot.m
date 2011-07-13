@@ -2,7 +2,9 @@
 #import "CPTMutableNumericData.h"
 #import "CPTNumericData.h"
 #import "CPTScatterPlot.h"
+#import "CPTLegend.h"
 #import "CPTLineStyle.h"
+#import "CPTPathExtensions.h"
 #import "CPTPlotArea.h"
 #import "CPTPlotSpace.h"
 #import "CPTPlotSpaceAnnotation.h"
@@ -447,7 +449,7 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 	
 	NSUInteger result = [self extremeDrawnPointIndexForFlags:drawPointFlags extremeNumIsLowerBound:YES];
 	if ( result != NSNotFound ) {
-		CGFloat minimumDistanceSquared = squareOfDistanceBetweenPoints(viewPoint, viewPoints[result]);
+		CGFloat minimumDistanceSquared = NAN;
 		for ( NSUInteger i = result; i < dataCount; ++i ) {
 			CGFloat distanceSquared = squareOfDistanceBetweenPoints(viewPoint, viewPoints[i]);
 			if ( isnan(minimumDistanceSquared) || (distanceSquared < minimumDistanceSquared) ) {
@@ -655,6 +657,87 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 	return dataLinePath;
 }
 
+-(void)drawSwatchForLegend:(CPTLegend *)legend atIndex:(NSUInteger)index inRect:(CGRect)rect inContext:(CGContextRef)context
+{
+	[super drawSwatchForLegend:legend atIndex:index inRect:rect inContext:context];
+	
+	CPTLineStyle *theLineStyle = self.dataLineStyle;
+	
+	if ( theLineStyle ) {
+		[theLineStyle setLineStyleInContext:context];
+		
+		CGPoint alignedStartPoint = CPTAlignPointToUserSpace(context, CGPointMake(CGRectGetMinX(rect), CGRectGetMidY(rect)));
+		CGPoint alignedEndPoint = CPTAlignPointToUserSpace(context, CGPointMake(CGRectGetMaxX(rect), CGRectGetMidY(rect)));
+		CGContextMoveToPoint(context, alignedStartPoint.x, alignedStartPoint.y);
+		CGContextAddLineToPoint(context, alignedEndPoint.x, alignedEndPoint.y);
+
+		CGContextStrokePath(context);
+	}
+	
+	CPTPlotSymbol *thePlotSymbol = self.plotSymbol;
+	
+	if ( thePlotSymbol ) {
+		CGFloat scale = 1.0;
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+		if ( [self respondsToSelector:@selector(contentsScale)] ) {
+			scale = [self contentsScale];
+		}
+#endif
+		[thePlotSymbol renderInContext:context
+							   atPoint:CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect))
+								 scale:scale];
+	}
+	
+	// if no line or plot symbol, use the area fills to draw the swatch
+	if ( !theLineStyle && !thePlotSymbol ) {
+		CPTFill *fill1 = self.areaFill;
+		CPTFill *fill2 = self.areaFill2;
+		
+		if ( fill1 || fill2 ) {
+			CGPathRef swatchPath;
+			CGFloat radius = legend.swatchCornerRadius;
+			if ( radius > 0.0 ) {
+				radius = MIN(MIN(radius, rect.size.width / 2.0), rect.size.height / 2.0);
+				swatchPath = CreateRoundedRectPath(rect, radius);
+			}
+			else {
+				CGMutablePathRef mutablePath = CGPathCreateMutable();
+				CGPathAddRect(mutablePath, NULL, rect);
+				swatchPath = mutablePath;
+			}
+			
+			if ( fill1 && !fill2 ) {
+				CGContextBeginPath(context);
+				CGContextAddPath(context, swatchPath);
+				[fill1 fillPathInContext:context];
+			}
+			else if ( !fill1 && fill2 ) {
+				CGContextBeginPath(context);
+				CGContextAddPath(context, swatchPath);
+				[fill2 fillPathInContext:context];
+			}
+			else {
+				CGContextSaveGState(context);
+				CGContextAddPath(context, swatchPath);
+				CGContextClip(context);
+				
+				if ( CPTDecimalGreaterThanOrEqualTo(self.areaBaseValue2, self.areaBaseValue) ) {
+					[fill1 fillRect:CGRectMake(CGRectGetMinX(rect), CGRectGetMinY(rect), rect.size.width, rect.size.height / 2.0) inContext:context];
+					[fill2 fillRect:CGRectMake(CGRectGetMinX(rect), CGRectGetMidY(rect), rect.size.width, rect.size.height / 2.0) inContext:context];
+				}
+				else {
+					[fill2 fillRect:CGRectMake(CGRectGetMinX(rect), CGRectGetMinY(rect), rect.size.width, rect.size.height / 2.0) inContext:context];
+					[fill1 fillRect:CGRectMake(CGRectGetMinX(rect), CGRectGetMidY(rect), rect.size.width, rect.size.height / 2.0) inContext:context];
+				}
+				
+				CGContextRestoreGState(context);
+			}
+			
+			CGPathRelease(swatchPath);
+		}
+	}
+}
+
 #pragma mark -
 #pragma mark Fields
 
@@ -761,6 +844,7 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 		[plotSymbol release];
 		plotSymbol = [aSymbol copy];
 		[self setNeedsDisplay];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
 	}
 }
 
@@ -770,6 +854,7 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 		[dataLineStyle release];
 		dataLineStyle = [newLineStyle copy];
 		[self setNeedsDisplay];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
 	}
 }
 
@@ -779,6 +864,7 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 		[areaFill release];
 		areaFill = [newFill copy];
 		[self setNeedsDisplay];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
 	}
 }
 
@@ -788,6 +874,7 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 		[areaFill2 release];
 		areaFill2 = [newFill copy];
 		[self setNeedsDisplay];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
 	}
 }
 
@@ -798,6 +885,7 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 	}
 	areaBaseValue = newAreaBaseValue;
 	[self setNeedsDisplay];
+	[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
 }
 
 -(void)setAreaBaseValue2:(NSDecimal)newAreaBaseValue
@@ -807,6 +895,7 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 	}
 	areaBaseValue2 = newAreaBaseValue;
 	[self setNeedsDisplay];
+	[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
 }
 
 -(void)setXValues:(NSArray *)newValues 

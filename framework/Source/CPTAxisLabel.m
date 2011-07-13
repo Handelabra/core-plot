@@ -4,6 +4,7 @@
 #import "CPTMutableTextStyle.h"
 #import "CPTExceptions.h"
 #import "CPTUtilities.h"
+#import <tgmath.h>
 
 /**	@brief An axis label.
  *
@@ -47,9 +48,7 @@
  **/
 -(id)initWithText:(NSString *)newText textStyle:(CPTMutableTextStyle *)newStyle
 {
-	CPTTextLayer *newLayer = [[CPTTextLayer alloc] initWithText:newText];
-	newLayer.textStyle = newStyle;
-	[newLayer sizeToFit];
+	CPTTextLayer *newLayer = [[CPTTextLayer alloc] initWithText:newText style:newStyle];
 	self = [self initWithContentLayer:newLayer];
 	[newLayer release];
 	
@@ -105,7 +104,7 @@
 	
 	CGPoint newPosition = point;
 	CGFloat *value = (coordinate == CPTCoordinateX ? &(newPosition.x) : &(newPosition.y));
-    double angle = 0.0;
+    CGFloat angle = 0.0;
 	
 	CGFloat myRotation = self.rotation;
     content.transform = CATransform3DMakeRotation(myRotation, 0.0, 0.0, 1.0);
@@ -199,8 +198,8 @@
 	
 	angle += M_PI;
 	angle -= myRotation;
-	double newAnchorX = cos(angle);
-	double newAnchorY = sin(angle);
+	CGFloat newAnchorX = cos(angle);
+	CGFloat newAnchorY = sin(angle);
 	
 	if ( ABS(newAnchorX) <= ABS(newAnchorY) ) {
 		newAnchorX /= ABS(newAnchorY);
@@ -234,13 +233,12 @@
  *	@param secondPoint The second view point.
  *	@param coordinate The axis coordinate.
  *	@param direction The offset direction.
- *	@note Not implemented.
- *	@todo Write implementation for positioning label between ticks.
  **/
 -(void)positionBetweenViewPoint:(CGPoint)firstPoint andViewPoint:(CGPoint)secondPoint forCoordinate:(CPTCoordinate)coordinate inDirection:(CPTSign)direction
 {
-	// TODO: Write implementation for positioning label between ticks
-	[NSException raise:CPTException format:@"positionBetweenViewPoint:andViewPoint:forCoordinate:inDirection: not implemented"];
+	[self positionRelativeToViewPoint:CGPointMake((firstPoint.x + secondPoint.x) / 2.0, (firstPoint.y + secondPoint.y) / 2.0)
+						forCoordinate:coordinate
+						  inDirection:direction];
 }
 
 #pragma mark -

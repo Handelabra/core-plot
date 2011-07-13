@@ -132,8 +132,6 @@
     dataSourceLinePlot.dataSource = self;
     [graph addPlot:dataSourceLinePlot];
 
-    [self generateData];
-    
     // Auto scale the plot space to fit the plot data
     // Extend the y range by 10% for neatness
     [plotSpace scaleToFitPlots:[NSArray arrayWithObjects:dataSourceLinePlot, nil]];
@@ -167,6 +165,16 @@
     // We will display an annotation when a symbol is touched
     dataSourceLinePlot.delegate = self; 
     dataSourceLinePlot.plotSymbolMarginForHitDetection = 5.0f;
+
+	// Add legend
+	graph.legend = [CPTLegend legendWithGraph:graph];
+	graph.legend.textStyle = x.titleTextStyle;
+	graph.legend.fill = [CPTFill fillWithColor:[CPTColor darkGrayColor]];
+	graph.legend.borderLineStyle = x.axisLineStyle;
+	graph.legend.cornerRadius = 5.0;
+	graph.legend.swatchSize = CGSizeMake(25.0, 25.0);
+	graph.legendAnchor = CPTRectAnchorBottom;
+	graph.legendDisplacement = CGPointMake(0.0, 12.0);
 }
 
 - (void)dealloc

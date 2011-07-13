@@ -2,6 +2,7 @@
 #import "CPTLineStyle.h"
 #import "CPTFill.h"
 #import "CPTPlotSymbol.h"
+#import <tgmath.h>
 
 /**	@cond */
 @interface CPTPlotSymbol()
@@ -20,7 +21,7 @@
  */
 @implementation CPTPlotSymbol
 
-/** @property size 
+/**	@property size
  *  @brief The symbol size.
  **/
 @synthesize size;
@@ -354,11 +355,7 @@
 		layerSize.width /= scale;
 		layerSize.height /= scale;
 
-#if CGFLOAT_IS_DOUBLE
 		CGPoint origin = CGPointMake(round(center.x - layerSize.width / 2.0), round(center.y - layerSize.height / 2.0));
-#else
-		CGPoint origin = CGPointMake(roundf(center.x - layerSize.width / 2.0f), roundf(center.y - layerSize.height / 2.0f));
-#endif
 		CGContextDrawLayerInRect(theContext, CGRectMake(origin.x, origin.y, layerSize.width, layerSize.height), theCachedLayer);
 	}
 }
@@ -410,13 +407,15 @@
 				CGRect bounds = CGRectMake(-halfSize.width, -halfSize.height, symbolSize.width, symbolSize.height);
 				
 				CGContextSaveGState(theContext);
-				CGContextBeginPath(theContext);
-				CGContextAddPath(theContext, theSymbolPath);
-				if ( self.usesEvenOddClipRule ) {
-					CGContextEOClip(theContext);
-				}
-				else {
-					CGContextClip(theContext);
+				if ( !CGPathIsEmpty(theSymbolPath) ) {
+					CGContextBeginPath(theContext);
+					CGContextAddPath(theContext, theSymbolPath);
+					if ( self.usesEvenOddClipRule ) {
+						CGContextEOClip(theContext);
+					}
+					else {
+						CGContextClip(theContext);
+					}
 				}
 				[theFill fillRect:bounds inContext:theContext];
 				CGContextRestoreGState(theContext);
@@ -428,7 +427,7 @@
 				CGContextAddPath(theContext, theSymbolPath);
 				CGContextStrokePath(theContext);
 			}
-
+			
 			CGContextRestoreGState(theContext);
 		}
 	}
@@ -438,7 +437,8 @@
 #pragma mark Private methods
 
 /**	@internal
- *	@brief Creates a drawing path for the selected symbol shape and stores it in symbolPath.
+ *	@brief Creates and returns a drawing path for the current symbol type.
+ *	@return A path describing the outline of the current symbol type.
  **/
 -(CGPathRef)newSymbolPath
 {

@@ -7,7 +7,6 @@
 //
 
 #import "PlotGallery.h"
-#import "PlotItem.h"
 
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
 #else
@@ -91,6 +90,11 @@
     [super dealloc];
 }
 
+// override to generate data for the plot if needed
+- (void)generateData
+{
+}
+
 - (NSComparisonResult)titleCompare:(PlotItem *)other
 {
     return [title caseInsensitiveCompare:other.title];
@@ -154,13 +158,12 @@
 - (UIImage *)image
 {
     if (cachedImage == nil) {
-        CGRect imageFrame = CGRectMake(0, 0, 100, 75);
+        CGRect imageFrame = CGRectMake(0, 0, 400, 300);
         UIView *imageView = [[UIView alloc] initWithFrame:imageFrame];
         [imageView setOpaque:YES];
         [imageView setUserInteractionEnabled:NO];
 
         [self renderInView:imageView withTheme:nil];        
-        [self reloadData];
 
         UIGraphicsBeginImageContext(imageView.bounds.size);
             CGContextRef c = UIGraphicsGetCurrentContext();
@@ -170,12 +173,9 @@
             [imageView.layer renderInContext:c];
             cachedImage = [UIGraphicsGetImageFromCurrentImageContext() retain];
         
-            // This code was to rescale a graph that needed a larger rendering
-            // area because of absolute pixel sizing. All of the sample plots
-            // are now aware of device/screen sizes and should render properly
-            // even to a thumbnail size.
-            //UIImage* bigImage = UIGraphicsGetImageFromCurrentImageContext();
-            //cachedImage = [[UIImage imageWithCGImage:[self scaleCGImage:[bigImage CGImage] toSize:CGSizeMake(100.0f, 75.0f)]] retain];
+            // rescale graph
+            UIImage* bigImage = UIGraphicsGetImageFromCurrentImageContext();
+            cachedImage = [[UIImage imageWithCGImage:[self scaleCGImage:[bigImage CGImage] toSize:CGSizeMake(100.0f, 75.0f)]] retain];
 
         UIGraphicsEndImageContext();
 
@@ -196,7 +196,6 @@
         [imageView setWantsLayer:YES];
 
         [self renderInView:imageView withTheme:nil];
-        [self reloadData];
 
         CGSize boundsSize = imageFrame.size;
 
@@ -259,12 +258,7 @@
 {
     [self killGraph];
 
-#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-	CGRect bounds = [hostingView bounds];
-#else
-    CGRect bounds = NSRectToCGRect([hostingView bounds]);
-#endif
-    defaultLayerHostingView = [[CPTGraphHostingView alloc] initWithFrame:bounds];
+    defaultLayerHostingView = [(CPTGraphHostingView *)[CPTGraphHostingView alloc] initWithFrame:hostingView.bounds];
 
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
     defaultLayerHostingView.collapsesLayers = NO;
@@ -274,6 +268,7 @@
 #endif
 
     [hostingView addSubview:defaultLayerHostingView];
+	[self generateData];
     [self renderInLayer:defaultLayerHostingView withTheme:theme];
 }
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -112,7 +112,6 @@
 		32484B430F530E8B002151AD /* CPTPlotRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 32484B3F0F530E8B002151AD /* CPTPlotRange.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		32484B440F530E8B002151AD /* CPTPlotRange.m in Sources */ = {isa = PBXBuildFile; fileRef = 32484B400F530E8B002151AD /* CPTPlotRange.m */; };
 		4C97EEFE104D80C400B554F9 /* CPTNumericData+TypeConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C97EEF7104D80C400B554F9 /* CPTNumericData+TypeConversion.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4C97EF00104D80C400B554F9 /* CPTNumericData+TypeConversions_Generation.py in Resources */ = {isa = PBXBuildFile; fileRef = 4C97EEF9104D80C400B554F9 /* CPTNumericData+TypeConversions_Generation.py */; };
 		4C97EF01104D80C400B554F9 /* CPTNumericData.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C97EEFA104D80C400B554F9 /* CPTNumericData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4C97EF02104D80C400B554F9 /* CPTNumericData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C97EEFB104D80C400B554F9 /* CPTNumericData.m */; };
 		4C97EF03104D80C400B554F9 /* CPTNumericDataType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C97EEFC104D80C400B554F9 /* CPTNumericDataType.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -146,6 +145,8 @@
 		BC89A64110239D1D009D5261 /* CorePlotProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = BC89A64010239D1D009D5261 /* CorePlotProbes.d */; };
 		BCFC7C3710921FDB00DAECAA /* CPTAxisTitle.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFC7C3510921FDB00DAECAA /* CPTAxisTitle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCFC7C3810921FDB00DAECAA /* CPTAxisTitle.m in Sources */ = {isa = PBXBuildFile; fileRef = BCFC7C3610921FDB00DAECAA /* CPTAxisTitle.m */; };
+		C30550ED1399BE5400E0151F /* CPTLegendEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = C30550EB1399BE5400E0151F /* CPTLegendEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C30550EE1399BE5400E0151F /* CPTLegendEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = C30550EC1399BE5400E0151F /* CPTLegendEntry.m */; };
 		C318F4AD11EA188700595FF9 /* CPTLimitBand.h in Headers */ = {isa = PBXBuildFile; fileRef = C318F4AB11EA188700595FF9 /* CPTLimitBand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C318F4AE11EA188700595FF9 /* CPTLimitBand.m in Sources */ = {isa = PBXBuildFile; fileRef = C318F4AC11EA188700595FF9 /* CPTLimitBand.m */; };
 		C32BCF801054081C00639E25 /* CPTLayoutManager.h in Headers */ = {isa = PBXBuildFile; fileRef = C32BCF7E1054081C00639E25 /* CPTLayoutManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -174,6 +175,8 @@
 		C36E89BA11EE7F97003DE309 /* CPTPlotRangeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C36E89B911EE7F97003DE309 /* CPTPlotRangeTests.m */; };
 		C38DD49311A04B7A002A68E7 /* CPTGridLineGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = C38DD49111A04B7A002A68E7 /* CPTGridLineGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C38DD49411A04B7A002A68E7 /* CPTGridLineGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = C38DD49211A04B7A002A68E7 /* CPTGridLineGroup.m */; };
+		C3920AC41395B6500045F3BB /* CPTLegend.h in Headers */ = {isa = PBXBuildFile; fileRef = C3920AC21395B6500045F3BB /* CPTLegend.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C3920AC51395B6500045F3BB /* CPTLegend.m in Sources */ = {isa = PBXBuildFile; fileRef = C3920AC31395B6500045F3BB /* CPTLegend.m */; };
 		C3AFC9D10FB62969005DFFDC /* CPTImage.h in Headers */ = {isa = PBXBuildFile; fileRef = C3AFC9CF0FB62969005DFFDC /* CPTImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C3BFFD1112274CB500DE22AC /* CPTNumericDataTypeConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C97EF08104D80D400B554F9 /* CPTNumericDataTypeConversionTests.m */; };
 		C3CAFB261229E41F00F5C989 /* CPTMutableNumericData+TypeConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CAFB241229E41F00F5C989 /* CPTMutableNumericData+TypeConversion.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -359,6 +362,8 @@
 		BC89A64010239D1D009D5261 /* CorePlotProbes.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; name = CorePlotProbes.d; path = TestResources/CorePlotProbes.d; sourceTree = SOURCE_ROOT; };
 		BCFC7C3510921FDB00DAECAA /* CPTAxisTitle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTAxisTitle.h; sourceTree = "<group>"; };
 		BCFC7C3610921FDB00DAECAA /* CPTAxisTitle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTAxisTitle.m; sourceTree = "<group>"; };
+		C30550EB1399BE5400E0151F /* CPTLegendEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTLegendEntry.h; sourceTree = "<group>"; };
+		C30550EC1399BE5400E0151F /* CPTLegendEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTLegendEntry.m; sourceTree = "<group>"; };
 		C318F4AB11EA188700595FF9 /* CPTLimitBand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTLimitBand.h; sourceTree = "<group>"; };
 		C318F4AC11EA188700595FF9 /* CPTLimitBand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTLimitBand.m; sourceTree = "<group>"; };
 		C32B391610AA4C78000470D4 /* CPTGridLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTGridLines.h; sourceTree = "<group>"; };
@@ -384,6 +389,8 @@
 		C36E89B911EE7F97003DE309 /* CPTPlotRangeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTPlotRangeTests.m; sourceTree = "<group>"; };
 		C38DD49111A04B7A002A68E7 /* CPTGridLineGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTGridLineGroup.h; sourceTree = "<group>"; };
 		C38DD49211A04B7A002A68E7 /* CPTGridLineGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTGridLineGroup.m; sourceTree = "<group>"; };
+		C3920AC21395B6500045F3BB /* CPTLegend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTLegend.h; sourceTree = "<group>"; };
+		C3920AC31395B6500045F3BB /* CPTLegend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTLegend.m; sourceTree = "<group>"; };
 		C3AFC9CF0FB62969005DFFDC /* CPTImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTImage.h; sourceTree = "<group>"; };
 		C3AFC9D00FB62969005DFFDC /* CPTImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTImage.m; sourceTree = "<group>"; };
 		C3B235631009931400970270 /* doxygen-cocoa-tags.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "doxygen-cocoa-tags.xml"; path = "../documentation/doxygen-cocoa-tags.xml"; sourceTree = "<group>"; };
@@ -605,6 +612,7 @@
 				07BF0D8C0F2B737A002FCEA7 /* Spaces */,
 				07BF0D890F2B736D002FCEA7 /* Plots */,
 				07BF0D920F2B73AE002FCEA7 /* Axes */,
+				C3920AC11395B6170045F3BB /* Legends */,
 				0772C91E0FE2F70000EC4C16 /* Themes */,
 			);
 			path = Source;
@@ -613,20 +621,20 @@
 		07BF0D890F2B736D002FCEA7 /* Plots */ = {
 			isa = PBXGroup;
 			children = (
-				D0C0477C12D6560900DA8047 /* CPTRangePlot.h */,
-				D0C0477B12D6560900DA8047 /* CPTRangePlot.m */,
 				C3F31DE81045EB470058520A /* CPTPlotGroup.h */,
 				C3F31DE71045EB470058520A /* CPTPlotGroup.m */,
 				07BF0D7E0F2B72F6002FCEA7 /* CPTPlot.h */,
 				07BF0D7F0F2B72F6002FCEA7 /* CPTPlot.m */,
-				07BF0D950F2B73CA002FCEA7 /* CPTScatterPlot.h */,
-				07BF0D960F2B73CA002FCEA7 /* CPTScatterPlot.m */,
 				0799E0930F2BB5F300790525 /* CPTBarPlot.h */,
 				0799E0940F2BB5F300790525 /* CPTBarPlot.m */,
-				0772B43710E24D5C009CD04C /* CPTTradingRangePlot.h */,
-				0772B43810E24D5C009CD04C /* CPTTradingRangePlot.m */,
 				BC74A32E10FC402600E7E90D /* CPTPieChart.h */,
 				BC74A32F10FC402600E7E90D /* CPTPieChart.m */,
+				D0C0477C12D6560900DA8047 /* CPTRangePlot.h */,
+				D0C0477B12D6560900DA8047 /* CPTRangePlot.m */,
+				07BF0D950F2B73CA002FCEA7 /* CPTScatterPlot.h */,
+				07BF0D960F2B73CA002FCEA7 /* CPTScatterPlot.m */,
+				0772B43710E24D5C009CD04C /* CPTTradingRangePlot.h */,
+				0772B43810E24D5C009CD04C /* CPTTradingRangePlot.m */,
 				C34AFE5711021CE20041675A /* Plot Symbols */,
 				07FEBD5F110B7E6F00E44D37 /* Tests */,
 			);
@@ -949,6 +957,17 @@
 			name = "Plot Symbols";
 			sourceTree = "<group>";
 		};
+		C3920AC11395B6170045F3BB /* Legends */ = {
+			isa = PBXGroup;
+			children = (
+				C3920AC21395B6500045F3BB /* CPTLegend.h */,
+				C3920AC31395B6500045F3BB /* CPTLegend.m */,
+				C30550EB1399BE5400E0151F /* CPTLegendEntry.h */,
+				C30550EC1399BE5400E0151F /* CPTLegendEntry.m */,
+			);
+			name = Legends;
+			sourceTree = "<group>";
+		};
 		C3A959D210116FE100BF9739 /* Mac Specific */ = {
 			isa = PBXGroup;
 			children = (
@@ -1066,6 +1085,8 @@
 				07B69A5D12B6215000F4C16C /* CPTTextStyle.h in Headers */,
 				07B69B1712B62ABB00F4C16C /* CPTMutableLineStyle.h in Headers */,
 				D0C0477E12D6560900DA8047 /* CPTRangePlot.h in Headers */,
+				C3920AC41395B6500045F3BB /* CPTLegend.h in Headers */,
+				C30550ED1399BE5400E0151F /* CPTLegendEntry.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1117,9 +1138,10 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0410;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "CorePlot" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -1153,7 +1175,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				4C97EF00104D80C400B554F9 /* CPTNumericData+TypeConversions_Generation.py in Resources */,
 				4C97EF4D104D843E00B554F9 /* license.txt in Resources */,
 				071F3CB910FBAB5900D0A7B6 /* License.txt in Resources */,
 			);
@@ -1292,6 +1313,8 @@
 				07B69A5E12B6215000F4C16C /* CPTTextStyle.m in Sources */,
 				07B69B1812B62ABB00F4C16C /* CPTMutableLineStyle.m in Sources */,
 				D0C0477D12D6560900DA8047 /* CPTRangePlot.m in Sources */,
+				C3920AC51395B6500045F3BB /* CPTLegend.m in Sources */,
+				C30550EE1399BE5400E0151F /* CPTLegendEntry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1332,12 +1355,12 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				OTHER_LDFLAGS = (
@@ -1346,7 +1369,6 @@
 					"-framework",
 					SenTestingKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
 				WRAPPER_EXTENSION = octest;
 			};
@@ -1359,11 +1381,11 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				OTHER_LDFLAGS = (
@@ -1372,7 +1394,6 @@
 					"-framework",
 					SenTestingKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;
@@ -1383,13 +1404,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1407,6 +1427,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1429,12 +1450,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -1452,9 +1476,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = "";
+				SDKROOT = macosx;
+				SEPARATE_STRIP = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_STYLE = debugging;
 				SYMROOT = "$(PROJECT_DIR)/../build";
 			};
 			name = Debug;
@@ -1463,11 +1489,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -1484,9 +1514,11 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				SDKROOT = "";
+				SDKROOT = macosx;
+				SEPARATE_STRIP = YES;
+				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_STYLE = debugging;
 				SYMROOT = "$(PROJECT_DIR)/../build";
 				"VALID_ARCHS[sdk=*]" = "";
 			};
@@ -1499,6 +1531,7 @@
 				DOXYGEN_PATH = /Applications/Doxygen.app/Contents/Resources/doxygen;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = Documentation;
 			};
 			name = Debug;
@@ -1509,7 +1542,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DOXYGEN_PATH = /Applications/Doxygen.app/Contents/Resources/doxygen;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = Documentation;
 				ZERO_LINK = NO;
 			};
