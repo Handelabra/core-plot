@@ -6,7 +6,18 @@
 @class CPTGraph;
 @class CPTPlotSpace;
 
+/// @name Plot Space
+/// @{
+
+/**	@brief Plot space coordinate change notification.
+ *
+ *	This notification is posted to the default notification center whenever the mapping between
+ *	the plot space coordinate system and drawing coordinates changes.
+ *	@ingroup notification
+ **/
 extern NSString * const CPTPlotSpaceCoordinateMappingDidChangeNotification;
+
+/// @}
 
 /**	@brief Plot space delegate.
  **/
@@ -88,15 +99,15 @@ extern NSString * const CPTPlotSpaceCoordinateMappingDidChangeNotification;
 
 #pragma mark -
 
-@interface CPTPlotSpace : NSObject <CPTResponder> {
+@interface CPTPlotSpace : NSObject <CPTResponder, NSCoding> {
 	@private
     __weak CPTGraph *graph;
-	id <NSCopying, NSObject> identifier;
+	id <NSCopying, NSCoding, NSObject> identifier;
     __weak id <CPTPlotSpaceDelegate> delegate;
     BOOL allowsUserInteraction;
 }
 
-@property (nonatomic, readwrite, copy) id <NSCopying, NSObject> identifier;
+@property (nonatomic, readwrite, copy) id <NSCopying, NSCoding, NSObject> identifier;
 @property (nonatomic, readwrite, assign) BOOL allowsUserInteraction;
 @property (nonatomic, readwrite, assign) __weak CPTGraph *graph;
 @property (nonatomic, readwrite, assign) __weak id <CPTPlotSpaceDelegate> delegate;

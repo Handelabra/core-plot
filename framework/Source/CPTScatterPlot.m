@@ -13,13 +13,22 @@
 #import "CPTXYPlotSpace.h"
 #import "CPTPlotSymbol.h"
 #import "CPTFill.h"
+#import "NSCoderExtensions.h"
+#import "NSNumberExtensions.h"
 
-/// @name Binding Identifiers
-/// @{
+/**	@defgroup plotAnimationScatterPlot Scatter Plot
+ *	@ingroup plotAnimation
+ **/
+
+/**	@if MacOnly
+ *	@defgroup plotBindingsScatterPlot Scatter Plot Bindings
+ *	@ingroup plotBindings
+ *	@endif
+ **/
+
 NSString * const CPTScatterPlotBindingXValues = @"xValues";							///< X values.
 NSString * const CPTScatterPlotBindingYValues = @"yValues";							///< Y values.
 NSString * const CPTScatterPlotBindingPlotSymbols = @"plotSymbols";					///< Plot symbols.
-/// @}
 
 /**	@cond */
 @interface CPTScatterPlot ()
@@ -163,6 +172,40 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2);
 	[plotSymbols release];
     
 	[super dealloc];
+}
+
+-(void)encodeWithCoder:(NSCoder *)coder
+{
+	[super encodeWithCoder:coder];
+	
+	[coder encodeInteger:self.interpolation forKey:@"CPTScatterPlot.interpolation"];
+	[coder encodeObject:self.dataLineStyle forKey:@"CPTScatterPlot.dataLineStyle"];
+	[coder encodeObject:self.plotSymbol forKey:@"CPTScatterPlot.plotSymbol"];
+	[coder encodeObject:self.areaFill forKey:@"CPTScatterPlot.areaFill"];
+	[coder encodeObject:self.areaFill2 forKey:@"CPTScatterPlot.areaFill2"];
+	[coder encodeDecimal:self.areaBaseValue forKey:@"CPTScatterPlot.areaBaseValue"];
+	[coder encodeDecimal:self.areaBaseValue2 forKey:@"CPTScatterPlot.areaBaseValue2"];
+	[coder encodeCGFloat:self.plotSymbolMarginForHitDetection forKey:@"CPTScatterPlot.plotSymbolMarginForHitDetection"];
+
+	// No need to archive these properties:
+	// plotSymbols
+}
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+    if ( (self = [super initWithCoder:coder]) ) {
+		interpolation = [coder decodeIntegerForKey:@"CPTScatterPlot.interpolation"];
+		dataLineStyle = [[coder decodeObjectForKey:@"CPTScatterPlot.dataLineStyle"] copy];
+		plotSymbol = [[coder decodeObjectForKey:@"CPTScatterPlot.plotSymbol"] copy];
+		areaFill = [[coder decodeObjectForKey:@"CPTScatterPlot.areaFill"] copy];
+		areaFill2 = [[coder decodeObjectForKey:@"CPTScatterPlot.areaFill2"] copy];
+		areaBaseValue = [coder decodeDecimalForKey:@"CPTScatterPlot.areaBaseValue"];
+		areaBaseValue2 = [coder decodeDecimalForKey:@"CPTScatterPlot.areaBaseValue2"];
+		plotSymbolMarginForHitDetection = [coder decodeCGFloatForKey:@"CPTScatterPlot.plotSymbolMarginForHitDetection"];
+
+		plotSymbols = nil;
+	}
+    return self;
 }
 
 #pragma mark -
@@ -568,13 +611,14 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 		
 		// Draw plot symbols
 		if ( self.plotSymbol || self.plotSymbols.count ) {
+			// clear the plot shadow if any--symbols draw their own shadows
+			CGContextSetShadowWithColor(theContext, CGSizeZero, 0.0, NULL);
+			
 			if ( self.useFastRendering ) {
 				CGFloat scale = 1.0;
-#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-					if ( [self respondsToSelector:@selector(contentsScale)] ) {
-						scale = [self contentsScale];
-					}
-#endif
+				if ( [self respondsToSelector:@selector(contentsScale)] ) {
+					scale = [(NSNumber *)[self valueForKey:@"contentsScale"] cgFloatValue];
+				}
 				for ( NSUInteger i = firstDrawnPointIndex; i <= lastDrawnPointIndex; i++ ) {
 					if ( drawPointFlags[i] ) {
 						CPTPlotSymbol *currentSymbol = [self plotSymbolForRecordIndex:i];
@@ -678,11 +722,9 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 	
 	if ( thePlotSymbol ) {
 		CGFloat scale = 1.0;
-#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
 		if ( [self respondsToSelector:@selector(contentsScale)] ) {
-			scale = [self contentsScale];
+			scale = [(NSNumber *)[self valueForKey:@"contentsScale"] cgFloatValue];
 		}
-#endif
 		[thePlotSymbol renderInContext:context
 							   atPoint:CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect))
 								 scale:scale];
@@ -735,6 +777,26 @@ CGFloat squareOfDistanceBetweenPoints(CGPoint point1, CGPoint point2)
 			
 			CGPathRelease(swatchPath);
 		}
+	}
+}
+
+#pragma mark -
+#pragma mark Animation
+
++(BOOL)needsDisplayForKey:(NSString *)aKey
+{
+	static NSArray *keys = nil;
+	
+	if ( !keys ) {
+		keys = [[NSArray alloc] initWithObjects:
+				nil];
+	}
+	
+	if ( [keys containsObject:aKey] ) {
+		return YES;
+	}
+	else {
+		return [super needsDisplayForKey:aKey];
 	}
 }
 

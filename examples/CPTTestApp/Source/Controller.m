@@ -276,7 +276,7 @@ static NSString * const barPlot2 = @"Bar Plot 2";
     // Position y2 axis relative to the plot area, ie, not moving when dragging
     CPTXYAxis *y2 = [graph.axisSet.axes objectAtIndex:2];
 	y2.isFloatingAxis = YES;
-	y2.constraints = CPTMakeConstraints(CPTConstraintNone, CPTConstraintFixed);
+	y2.axisConstraints = [CPTConstraints constraintWithUpperOffset:150.0];
 }
 
 -(void)setupBarPlots
@@ -297,7 +297,7 @@ static NSString * const barPlot2 = @"Bar Plot 2";
     barPlot.barOffset = CPTDecimalFromFloat(-0.25f);
     barPlot.identifier = barPlot1;
 	barPlot.plotRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(0.0) length:CPTDecimalFromDouble(7.0)];
-    barPlot.barLabelTextStyle = whiteTextStyle;
+    barPlot.labelTextStyle = whiteTextStyle;
     [graph addPlot:barPlot toPlotSpace:barPlotSpace];
     
     // Second bar plot
@@ -338,7 +338,9 @@ static NSString * const barPlot2 = @"Bar Plot 2";
 	NSUInteger index = self.selectionIndex;
 	
 	if ( index != NSNotFound ) {
-		[self insertObject:[self newObject] atArrangedObjectIndex:index];
+		id newData = [self newObject];
+		[self insertObject:newData atArrangedObjectIndex:index];
+		[newData release];
 		
 		CPTPlot *plot = [graph plotWithIdentifier:dataSourcePlot];
 		[plot insertDataAtIndex:index numberOfRecords:1];
@@ -472,7 +474,6 @@ static NSString * const barPlot2 = @"Bar Plot 2";
     NSNumberFormatter *formatter = [[[NSNumberFormatter alloc] init] autorelease];
     [formatter setMaximumFractionDigits:2];
     NSString *yString = [formatter stringFromNumber:y];
-    
 	
     // Now add the annotation to the plot area
     CPTTextLayer *textLayer = [[[CPTTextLayer alloc] initWithText:yString style:hitAnnotationTextStyle] autorelease];
@@ -480,6 +481,14 @@ static NSString * const barPlot2 = @"Bar Plot 2";
 	symbolTextAnnotation.contentLayer = textLayer;
     symbolTextAnnotation.displacement = CGPointMake(0.0f, 0.0f);
     [graph.plotAreaFrame.plotArea addAnnotation:symbolTextAnnotation];    
+
+	CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"barWidthScale"];
+	animation.duration = 0.25;
+	animation.toValue = [NSNumber numberWithDouble:0.0];
+	animation.repeatCount = 1;
+	animation.autoreverses = YES;
+	animation.removedOnCompletion = YES;
+	[plot addAnimation:animation forKey:@"barWidthScale"];
 }
 
 #pragma mark -

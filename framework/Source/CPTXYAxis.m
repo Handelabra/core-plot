@@ -1,9 +1,10 @@
 #import "CPTAxisLabel.h"
-#import "CPTConstrainedPosition.h"
+#import "CPTConstraints.h"
 #import "CPTDefinitions.h"
 #import "CPTExceptions.h"
 #import "CPTFill.h"
 #import "CPTLimitBand.h"
+#import "CPTLineCap.h"
 #import "CPTLineStyle.h"
 #import "CPTPlotArea.h"
 #import "CPTPlotRange.h"
@@ -11,17 +12,15 @@
 #import "CPTUtilities.h"
 #import "CPTXYAxis.h"
 #import "CPTXYPlotSpace.h"
+#import "NSCoderExtensions.h"
 
 /**	@cond */
 @interface CPTXYAxis ()
-
-@property (readwrite, retain) CPTConstrainedPosition *constrainedPosition;
 
 -(void)drawTicksInContext:(CGContextRef)theContext atLocations:(NSSet *)locations withLength:(CGFloat)length isMajor:(BOOL)major; 
 
 -(void)orthogonalCoordinateViewLowerBound:(CGFloat *)lower upperBound:(CGFloat *)upper;
 -(CGPoint)viewPointForOrthogonalCoordinateDecimal:(NSDecimal)orthogonalCoord axisCoordinateDecimal:(NSDecimal)coordinateDecimalNumber;
--(void)updateConstraints;
 
 @end
 /**	@endcond */
@@ -37,14 +36,15 @@
  **/
 @synthesize orthogonalCoordinateDecimal;
 
-/**	@property constraints
+/**	@property axisConstraints
  *	@brief The constraints used when positioning relative to the plot area.
  *  For axes fixed in the plot coordinate system, this is ignored.
  **/
-@synthesize constraints;
+@synthesize axisConstraints;
 
 /**	@property isFloatingAxis
  *	@brief True if the axis floats independent of the plot space.
+ *
  *  If false, the axis is fixed relative to the plot space coordinates, and moves
  *  whenever the plot space ranges change.
  *  When true, the axis must be constrained relative to the plot area, in view coordinates.
@@ -52,18 +52,15 @@
  **/
 @synthesize isFloatingAxis;
 
-@synthesize constrainedPosition;
-
 #pragma mark -
 #pragma mark Init/Dealloc
 
 -(id)initWithFrame:(CGRect)newFrame
 {
 	if ( (self = [super initWithFrame:newFrame]) ) {
-    	CPTConstraints newConstraints = {CPTConstraintNone, CPTConstraintNone};
-        orthogonalCoordinateDecimal = [[NSDecimalNumber zero] decimalValue];
+        orthogonalCoordinateDecimal = CPTDecimalFromInteger(0);
         isFloatingAxis = NO;
-        self.constraints = newConstraints;
+		axisConstraints = nil;
 		self.tickDirection = CPTSignNone;
 	}
 	return self;
@@ -76,16 +73,37 @@
 		
 		isFloatingAxis = theLayer->isFloatingAxis;
 		orthogonalCoordinateDecimal = theLayer->orthogonalCoordinateDecimal;
-		constraints = theLayer->constraints;
-		constrainedPosition = [theLayer->constrainedPosition retain];
+		axisConstraints = [theLayer->axisConstraints retain];
 	}
 	return self;
 }
 
 -(void)dealloc 
 {
-    [constrainedPosition release];
+    [axisConstraints release];
     [super dealloc];
+}
+
+#pragma mark -
+#pragma mark NSCoding methods
+
+-(void)encodeWithCoder:(NSCoder *)coder
+{
+	[super encodeWithCoder:coder];
+	
+	[coder encodeBool:self.isFloatingAxis forKey:@"CPTXYAxis.isFloatingAxis"];
+	[coder encodeDecimal:self.orthogonalCoordinateDecimal forKey:@"CPTXYAxis.orthogonalCoordinateDecimal"];
+	[coder encodeObject:self.axisConstraints forKey:@"CPTXYAxis.axisConstraints"];
+}
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+    if ( (self = [super initWithCoder:coder]) ) {
+		isFloatingAxis = [coder decodeBoolForKey:@"CPTXYAxis.isFloatingAxis"];
+		orthogonalCoordinateDecimal = [coder decodeDecimalForKey:@"CPTXYAxis.orthogonalCoordinateDecimal"];
+		axisConstraints = [[coder decodeObjectForKey:@"CPTXYAxis.axisConstraints"] retain];
+	}
+    return self;
 }
 
 #pragma mark -
@@ -93,25 +111,41 @@
 
 -(void)orthogonalCoordinateViewLowerBound:(CGFloat *)lower upperBound:(CGFloat *)upper 
 {
-	NSDecimal zero = CPTDecimalFromInteger(0);
-    CPTCoordinate orthogonalCoordinate = (self.coordinate == CPTCoordinateX ? CPTCoordinateY : CPTCoordinateX);
+    CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
     CPTXYPlotSpace *xyPlotSpace = (CPTXYPlotSpace *)self.plotSpace;
     CPTPlotRange *orthogonalRange = [xyPlotSpace plotRangeForCoordinate:orthogonalCoordinate];
     NSAssert( orthogonalRange != nil, @"The orthogonalRange was nil in orthogonalCoordinateViewLowerBound:upperBound:" );
+	
+	NSDecimal zero = CPTDecimalFromInteger(0);
     CGPoint lowerBoundPoint = [self viewPointForOrthogonalCoordinateDecimal:orthogonalRange.location axisCoordinateDecimal:zero];
     CGPoint upperBoundPoint = [self viewPointForOrthogonalCoordinateDecimal:orthogonalRange.end axisCoordinateDecimal:zero];
-    *lower = (self.coordinate == CPTCoordinateX ? lowerBoundPoint.y : lowerBoundPoint.x);
-    *upper = (self.coordinate == CPTCoordinateX ? upperBoundPoint.y : upperBoundPoint.x);
+	
+	switch ( self.coordinate ) {
+		case CPTCoordinateX:
+			*lower = lowerBoundPoint.y;
+			*upper = upperBoundPoint.y;
+			break;
+			
+		case CPTCoordinateY:
+			*lower = lowerBoundPoint.x;
+			*upper = upperBoundPoint.x;
+			break;
+			
+		default:
+			break;
+	}
 }
 
 -(CGPoint)viewPointForOrthogonalCoordinateDecimal:(NSDecimal)orthogonalCoord axisCoordinateDecimal:(NSDecimal)coordinateDecimalNumber
 {
-    CPTCoordinate orthogonalCoordinate = (self.coordinate == CPTCoordinateX ? CPTCoordinateY : CPTCoordinateX);
+	CPTCoordinate myCoordinate = self.coordinate;
+    CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(myCoordinate);
+	
     NSDecimal plotPoint[2];
-    plotPoint[self.coordinate] = coordinateDecimalNumber;
+    plotPoint[myCoordinate] = coordinateDecimalNumber;
     plotPoint[orthogonalCoordinate] = orthogonalCoord;
-    CGPoint point = [self convertPoint:[self.plotSpace plotAreaViewPointForPlotPoint:plotPoint] fromLayer:self.plotArea];
-    return point;
+
+    return [self convertPoint:[self.plotSpace plotAreaViewPointForPlotPoint:plotPoint] fromLayer:self.plotArea];
 }
 
 -(CGPoint)viewPointForCoordinateDecimalNumber:(NSDecimal)coordinateDecimalNumber
@@ -119,21 +153,27 @@
     CGPoint point = [self viewPointForOrthogonalCoordinateDecimal:self.orthogonalCoordinateDecimal axisCoordinateDecimal:coordinateDecimalNumber];
     
     if ( self.isFloatingAxis ) {
-        if ( self.constrainedPosition ) {
+		CPTConstraints *theAxisConstraints = self.axisConstraints;
+        if ( theAxisConstraints ) {
         	CGFloat lb, ub;
             [self orthogonalCoordinateViewLowerBound:&lb upperBound:&ub];
-        	constrainedPosition.lowerBound = lb;
-            constrainedPosition.upperBound = ub;
-            CGFloat position = constrainedPosition.position;
-            if ( self.coordinate == CPTCoordinateX ) {
-                point.y = position;
-            }
-            else {
-                point.x = position;
-            }
+			CGFloat constrainedPosition = [theAxisConstraints positionForLowerBound:lb upperBound:ub];
+
+			switch ( self.coordinate ) {
+				case CPTCoordinateX:
+					point.y = constrainedPosition;
+					break;
+					
+				case CPTCoordinateY:
+					point.x = constrainedPosition;
+					break;
+					
+				default:
+					break;
+			}
         }
         else {
-			[NSException raise:CPTException format:@"Plot area relative positioning requires a CPTConstrainedPosition"];
+			[NSException raise:CPTException format:@"Plot area relative positioning requires axisConstraints"];
         }
     }
     
@@ -211,18 +251,55 @@
     [self drawTicksInContext:theContext atLocations:self.majorTickLocations withLength:self.majorTickLength isMajor:YES];
     
     // Axis Line
-	if ( self.axisLineStyle ) {
+	CPTLineStyle *theLineStyle = self.axisLineStyle;
+	CPTLineCap *minCap = self.axisLineCapMin;
+	CPTLineCap *maxCap = self.axisLineCapMax;
+	
+	if ( theLineStyle || minCap || maxCap ) {
 		CPTPlotRange *range = [[self.plotSpace plotRangeForCoordinate:self.coordinate] copy];
-        if ( self.visibleRange ) {
-            [range intersectionPlotRange:self.visibleRange];
+		CPTPlotRange *theVisibleRange = self.visibleRange;
+        if ( theVisibleRange ) {
+            [range intersectionPlotRange:theVisibleRange];
         }
-		CGPoint startViewPoint = CPTAlignPointToUserSpace(theContext, [self viewPointForCoordinateDecimalNumber:range.location]);
-		CGPoint endViewPoint = CPTAlignPointToUserSpace(theContext, [self viewPointForCoordinateDecimalNumber:range.end]);
-		[self.axisLineStyle setLineStyleInContext:theContext];
-		CGContextBeginPath(theContext);
-		CGContextMoveToPoint(theContext, startViewPoint.x, startViewPoint.y);
-		CGContextAddLineToPoint(theContext, endViewPoint.x, endViewPoint.y);
-		CGContextStrokePath(theContext);
+		
+		if ( theLineStyle ) {
+			CGPoint startViewPoint = CPTAlignPointToUserSpace(theContext, [self viewPointForCoordinateDecimalNumber:range.location]);
+			CGPoint endViewPoint = CPTAlignPointToUserSpace(theContext, [self viewPointForCoordinateDecimalNumber:range.end]);
+			[theLineStyle setLineStyleInContext:theContext];
+			CGContextBeginPath(theContext);
+			CGContextMoveToPoint(theContext, startViewPoint.x, startViewPoint.y);
+			CGContextAddLineToPoint(theContext, endViewPoint.x, endViewPoint.y);
+			CGContextStrokePath(theContext);
+		}
+
+		CGPoint axisDirection = CGPointZero;
+		if ( minCap || maxCap ) {
+			switch ( self.coordinate ) {
+				case CPTCoordinateX:
+					axisDirection = (range.lengthDouble >= 0.0) ? CGPointMake(1.0, 0.0) : CGPointMake(-1.0, 0.0);
+					break;
+
+				case CPTCoordinateY:
+					axisDirection = (range.lengthDouble >= 0.0) ? CGPointMake(0.0, 1.0) : CGPointMake(0.0, -1.0);
+					break;
+					
+				default:
+					break;
+			}
+		}
+		
+		if ( minCap ) {
+			NSDecimal endPoint = range.minLimit;
+			CGPoint viewPoint = CPTAlignPointToUserSpace(theContext, [self viewPointForCoordinateDecimalNumber:endPoint]);
+			[minCap renderAsVectorInContext:theContext atPoint:viewPoint inDirection:CGPointMake(-axisDirection.x, -axisDirection.y)];
+		}
+		
+		if ( maxCap ) {
+			NSDecimal endPoint = range.maxLimit;
+			CGPoint viewPoint = CPTAlignPointToUserSpace(theContext, [self viewPointForCoordinateDecimalNumber:endPoint]);
+			[maxCap renderAsVectorInContext:theContext atPoint:viewPoint inDirection:axisDirection];
+		}
+		
         [range release];
 	}
 }
@@ -242,7 +319,7 @@
 		CPTPlotSpace *thePlotSpace = self.plotSpace;
 		NSSet *locations = (major ? self.majorTickLocations : self.minorTickLocations);
 		CPTCoordinate selfCoordinate = self.coordinate;
-		CPTCoordinate orthogonalCoordinate = (selfCoordinate == CPTCoordinateX ? CPTCoordinateY : CPTCoordinateX);
+		CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(selfCoordinate);
 		CPTPlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] copy];
 		CPTPlotRange *theGridLineRange = self.gridLinesRange;
 		if ( theGridLineRange ) {
@@ -306,7 +383,7 @@
 				}
 			}
 			
-			CPTCoordinate orthogonalCoordinate = (selfCoordinate == CPTCoordinateX ? CPTCoordinateY : CPTCoordinateX);
+			CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(selfCoordinate);
 			CPTPlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] copy];
 			CPTPlotRange *theGridLineRange = self.gridLinesRange;
 			if ( theGridLineRange ) {
@@ -315,23 +392,40 @@
 			
 			NSDecimal zero = CPTDecimalFromInteger(0);
 			NSSortDescriptor *sortDescriptor = nil;
-			if ( CPTDecimalGreaterThanOrEqualTo(range.length, zero) ) {
-				sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES];
+			if ( range ) {
+				if ( CPTDecimalGreaterThanOrEqualTo(range.length, zero) ) {
+					sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES];
+				}
+				else {
+					sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO];
+				}
 			}
 			else {
-				sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:NO];
+				sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES];
 			}
 			locations = [locations sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
 			[sortDescriptor release];
 			
 			NSUInteger bandIndex = 0;
 			id null = [NSNull null];
-			NSDecimal lastLocation = range.location;
+			NSDecimal lastLocation;
+			if ( range ) {
+				lastLocation = range.location;
+			}
+			else {
+				lastLocation = CPTDecimalNaN();
+			}
 			
 			NSDecimal startPlotPoint[2];
 			NSDecimal endPlotPoint[2];
-			startPlotPoint[orthogonalCoordinate] = orthogonalRange.location;
-			endPlotPoint[orthogonalCoordinate] = orthogonalRange.end;
+			if ( orthogonalRange ) {
+				startPlotPoint[orthogonalCoordinate] = orthogonalRange.location;
+				endPlotPoint[orthogonalCoordinate] = orthogonalRange.end;
+			}
+			else {
+				startPlotPoint[orthogonalCoordinate] = CPTDecimalNaN();
+				endPlotPoint[orthogonalCoordinate] = CPTDecimalNaN();
+			}
 			
 			for ( NSDecimalNumber *location in locations ) {
 				NSDecimal currentLocation = [location decimalValue];
@@ -361,12 +455,19 @@
 			}
 			
 			// Fill space between last location and the range end
-			if ( !CPTDecimalEquals(lastLocation, range.end) ) {
+			NSDecimal endLocation;
+			if ( range ) {
+				endLocation = range.end;
+			}
+			else {
+				endLocation = CPTDecimalNaN();
+			}
+			if ( !CPTDecimalEquals(lastLocation, endLocation) ) {
 				CPTFill *bandFill = [bandArray objectAtIndex:bandIndex];
 				
 				if ( bandFill != null ) {
 					// Start point
-					startPlotPoint[selfCoordinate] = range.end;
+					startPlotPoint[selfCoordinate] = endLocation;
 					CGPoint startViewPoint = [thePlotSpace plotAreaViewPointForPlotPoint:startPlotPoint];
 					
 					// End point
@@ -404,7 +505,7 @@
 			}
 		}
 		
-		CPTCoordinate orthogonalCoordinate = (selfCoordinate == CPTCoordinateX ? CPTCoordinateY : CPTCoordinateX);
+		CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(selfCoordinate);
 		CPTPlotRange *orthogonalRange = [[thePlotSpace plotRangeForCoordinate:orthogonalCoordinate] copy];
 		CPTPlotRange *theGridLineRange = self.gridLinesRange;
 		if ( theGridLineRange ) {
@@ -508,35 +609,15 @@
 }
 
 #pragma mark -
-#pragma mark Constraints
-
--(void)updateConstraints
-{
-    if ( self.plotSpace ) {
-        CGPoint axisPoint = [self viewPointForOrthogonalCoordinateDecimal:self.orthogonalCoordinateDecimal axisCoordinateDecimal:CPTDecimalFromInteger(0)];
-        CGFloat position = (self.coordinate == CPTCoordinateX ? axisPoint.y : axisPoint.x);
-        
-        CGFloat lb, ub;
-        [self orthogonalCoordinateViewLowerBound:&lb upperBound:&ub];
-        
-		CPTConstrainedPosition *cp = [[CPTConstrainedPosition alloc] initWithPosition:position lowerBound:lb upperBound:ub];
-		cp.constraints = self.constraints;
-        self.constrainedPosition = cp;
-        [cp release];         
-    }
-    else {
-        self.constrainedPosition = nil;
-    }
-}
-
-#pragma mark -
 #pragma mark Accessors
 
--(void)setConstraints:(CPTConstraints)newConstraints
+-(void)setAxisConstraints:(CPTConstraints *)newConstraints
 {
-    if ( (constraints.lower != newConstraints.lower) || (constraints.upper != newConstraints.upper) ) {
-        constraints = newConstraints;
-        [self updateConstraints];
+    if ( ![axisConstraints isEqualToConstraint:newConstraints] ) {
+		[axisConstraints release];
+        axisConstraints = [newConstraints retain];
+        [self setNeedsDisplay];
+        [self setNeedsLayout];
     }
 }
 
@@ -544,7 +625,6 @@
 {
     if ( NSDecimalCompare(&orthogonalCoordinateDecimal, &newCoord) != NSOrderedSame ) {
         orthogonalCoordinateDecimal = newCoord;
-        [self updateConstraints];
         [self setNeedsDisplay];
         [self setNeedsLayout];
     }

@@ -1,4 +1,5 @@
-#import "CPTSlateTheme.h"
+#import "_CPTDarkGradientTheme.h"
+
 #import "CPTXYGraph.h"
 #import "CPTColor.h"
 #import "CPTGradient.h"
@@ -13,8 +14,10 @@
 #import "CPTBorderedLayer.h"
 #import "CPTExceptions.h"
 
+NSString * const kCPTDarkGradientTheme = @"Dark Gradients";	///< Dark gradient theme.
+
 /**	@cond */
-@interface CPTSlateTheme ()
+@interface _CPTDarkGradientTheme ()
 
 -(void)applyThemeToAxis:(CPTXYAxis *)axis usingMajorLineStyle:(CPTLineStyle *)majorLineStyle minorLineStyle:(CPTLineStyle *)minorLineStyle textStyle:(CPTMutableTextStyle *)textStyle minorTickTextStyle:(CPTMutableTextStyle *)minorTickTextStyle;
 
@@ -23,14 +26,21 @@
 
 #pragma mark -
 
-/** @brief Creates a CPTXYGraph instance with colors that match the default iPhone navigation bar, toolbar buttons, and table views.
+/** @brief Creates a CPTXYGraph instance formatted with dark gray gradient backgrounds and light gray lines.
  **/
-@implementation CPTSlateTheme
+@implementation _CPTDarkGradientTheme
 
-+(NSString *)defaultName 
++(void)load
 {
-	return kCPTSlateTheme;
+	[self registerTheme:self];
 }
+
++(NSString *)name 
+{
+	return kCPTDarkGradientTheme;
+}
+
+#pragma mark -
 
 -(void)applyThemeToAxis:(CPTXYAxis *)axis usingMajorLineStyle:(CPTLineStyle *)majorLineStyle minorLineStyle:(CPTLineStyle *)minorLineStyle textStyle:(CPTMutableTextStyle *)textStyle minorTickTextStyle:(CPTMutableTextStyle *)minorTickTextStyle
 {
@@ -51,45 +61,59 @@
 
 -(void)applyThemeToBackground:(CPTXYGraph *)graph 
 {
-	// No background fill has been implemented
+	CPTColor *endColor = [CPTColor colorWithGenericGray:0.1];
+	CPTGradient *graphGradient = [CPTGradient gradientWithBeginningColor:endColor endingColor:endColor];
+	graphGradient = [graphGradient addColorStop:[CPTColor colorWithGenericGray:0.2] atPosition:0.3];
+	graphGradient = [graphGradient addColorStop:[CPTColor colorWithGenericGray:0.3] atPosition:0.5];
+	graphGradient = [graphGradient addColorStop:[CPTColor colorWithGenericGray:0.2] atPosition:0.6];
+	graphGradient.angle = 90.0;
+	graph.fill = [CPTFill fillWithGradient:graphGradient];
 }
 
 -(void)applyThemeToPlotArea:(CPTPlotAreaFrame *)plotAreaFrame 
 {
-	CPTGradient *gradient = [CPTGradient gradientWithBeginningColor:[CPTColor colorWithComponentRed:0.43f green:0.51f blue:0.63f alpha:1.0f] endingColor:[CPTColor colorWithComponentRed:0.70f green:0.73f blue:0.80f alpha:1.0f]];
+	CPTGradient *gradient = [CPTGradient gradientWithBeginningColor:[CPTColor colorWithGenericGray:0.1] endingColor:[CPTColor colorWithGenericGray:0.3]];
     gradient.angle = 90.0;
 	plotAreaFrame.fill = [CPTFill fillWithGradient:gradient]; 
-	
+
 	CPTMutableLineStyle *borderLineStyle = [CPTMutableLineStyle lineStyle];
 	borderLineStyle.lineColor = [CPTColor colorWithGenericGray:0.2];
-	borderLineStyle.lineWidth = 1.0;
+	borderLineStyle.lineWidth = 4.0;
 	
 	plotAreaFrame.borderLineStyle = borderLineStyle;
-	plotAreaFrame.cornerRadius = 5.0;
+	plotAreaFrame.cornerRadius = 10.0;
 }
 
 -(void)applyThemeToAxisSet:(CPTXYAxisSet *)axisSet {
     CPTMutableLineStyle *majorLineStyle = [CPTMutableLineStyle lineStyle];
     majorLineStyle.lineCap = kCGLineCapSquare;
-    majorLineStyle.lineColor = [CPTColor colorWithComponentRed:0.0f green:0.25f blue:0.50f alpha:1.0f];
+    majorLineStyle.lineColor = [CPTColor colorWithGenericGray:0.5];
     majorLineStyle.lineWidth = 2.0;
     
     CPTMutableLineStyle *minorLineStyle = [CPTMutableLineStyle lineStyle];
     minorLineStyle.lineCap = kCGLineCapSquare;
-    minorLineStyle.lineColor = [CPTColor blackColor];
+    minorLineStyle.lineColor = [CPTColor darkGrayColor];
     minorLineStyle.lineWidth = 1.0;
 	
-	CPTMutableTextStyle *blackTextStyle = [[[CPTMutableTextStyle alloc] init] autorelease];
-	blackTextStyle.color = [CPTColor blackColor];
-	blackTextStyle.fontSize = 14.0;
+	CPTMutableTextStyle *whiteTextStyle = [[[CPTMutableTextStyle alloc] init] autorelease];
+	whiteTextStyle.color = [CPTColor whiteColor];
+	whiteTextStyle.fontSize = 14.0;
 
-	CPTMutableTextStyle *minorTickBlackTextStyle = [[[CPTMutableTextStyle alloc] init] autorelease];
-	minorTickBlackTextStyle.color = [CPTColor blackColor];
-	minorTickBlackTextStyle.fontSize = 12.0;
+	CPTMutableTextStyle *whiteMinorTickTextStyle = [[[CPTMutableTextStyle alloc] init] autorelease];
+	whiteMinorTickTextStyle.color = [CPTColor whiteColor];
+	whiteMinorTickTextStyle.fontSize = 12.0;
 	
     for (CPTXYAxis *axis in axisSet.axes) {
-        [self applyThemeToAxis:axis usingMajorLineStyle:majorLineStyle minorLineStyle:minorLineStyle textStyle:blackTextStyle minorTickTextStyle:minorTickBlackTextStyle];
+        [self applyThemeToAxis:axis usingMajorLineStyle:majorLineStyle minorLineStyle:minorLineStyle textStyle:whiteTextStyle minorTickTextStyle:whiteMinorTickTextStyle];
     }
+}
+
+#pragma mark -
+#pragma mark NSCoding methods
+
+-(Class)classForCoder
+{
+	return [CPTTheme class];
 }
 
 @end

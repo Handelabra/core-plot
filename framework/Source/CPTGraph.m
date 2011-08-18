@@ -12,6 +12,15 @@
 #import "CPTTheme.h"
 #import "CPTLayerAnnotation.h"
 #import "CPTTextLayer.h"
+#import "NSCoderExtensions.h"
+
+/**	@defgroup graphAnimation Graphs
+ *	@brief Graph properties that can be animated using Core Animation.
+ *	@if MacOnly
+ *	@since Custom layer property animation is supported on MacOS 10.6 and later.
+ *	@endif
+ *	@ingroup animation
+ **/
 
 NSString * const CPTGraphNeedsRedrawNotification = @"CPTGraphNeedsRedrawNotification";
 
@@ -86,6 +95,7 @@ NSString * const CPTGraphNeedsRedrawNotification = @"CPTGraphNeedsRedrawNotifica
 
 /**	@property titleDisplacement
  *	@brief A vector giving the displacement of the title from the edge location.
+ *	@ingroup graphAnimation
  **/
 @synthesize titleDisplacement;
 
@@ -106,6 +116,7 @@ NSString * const CPTGraphNeedsRedrawNotification = @"CPTGraphNeedsRedrawNotifica
 
 /**	@property legendDisplacement
  *	@brief A vector giving the displacement of the legend from the edge location.
+ *	@ingroup graphAnimation
  **/
 @synthesize legendDisplacement;
 
@@ -145,7 +156,7 @@ NSString * const CPTGraphNeedsRedrawNotification = @"CPTGraphNeedsRedrawNotifica
         // Title
         title = nil;
         titlePlotAreaFrameAnchor = CPTRectAnchorTop;
-        titleTextStyle = [[CPTMutableTextStyle textStyle] retain];
+        titleTextStyle = [[CPTTextStyle textStyle] retain];
         titleDisplacement = CGPointZero;
 		titleAnnotation = nil;
 
@@ -195,6 +206,68 @@ NSString * const CPTGraphNeedsRedrawNotification = @"CPTGraphNeedsRedrawNotifica
 	[legendAnnotation release];
 	
 	[super dealloc];
+}
+
+#pragma mark -
+#pragma mark NSCoding methods
+
+-(void)encodeWithCoder:(NSCoder *)coder
+{
+	[super encodeWithCoder:coder];
+	
+	[coder encodeObject:self.plotAreaFrame forKey:@"CPTGraph.plotAreaFrame"];
+	[coder encodeObject:self.plots forKey:@"CPTGraph.plots"];
+	[coder encodeObject:self.plotSpaces forKey:@"CPTGraph.plotSpaces"];
+	[coder encodeObject:self.title forKey:@"CPTGraph.title"];
+	[coder encodeObject:self.titleTextStyle forKey:@"CPTGraph.titleTextStyle"];
+	[coder encodeInteger:self.titlePlotAreaFrameAnchor forKey:@"CPTGraph.titlePlotAreaFrameAnchor"];
+	[coder encodeCPTPoint:self.titleDisplacement forKey:@"CPTGraph.titleDisplacement"];
+	[coder encodeObject:self.titleAnnotation forKey:@"CPTGraph.titleAnnotation"];
+	[coder encodeObject:self.legend forKey:@"CPTGraph.legend"];
+	[coder encodeObject:self.legendAnnotation forKey:@"CPTGraph.legendAnnotation"];
+	[coder encodeInteger:self.legendAnchor forKey:@"CPTGraph.legendAnchor"];
+	[coder encodeCPTPoint:self.legendDisplacement forKey:@"CPTGraph.legendDisplacement"];
+}
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+    if ( (self = [super initWithCoder:coder]) ) {
+		plotAreaFrame = [[coder decodeObjectForKey:@"CPTGraph.plotAreaFrame"] retain];
+		plots = [[coder decodeObjectForKey:@"CPTGraph.plots"] mutableCopy];
+		plotSpaces = [[coder decodeObjectForKey:@"CPTGraph.plotSpaces"] mutableCopy];
+		title = [[coder decodeObjectForKey:@"CPTGraph.title"] copy];
+		titleTextStyle = [[coder decodeObjectForKey:@"CPTGraph.titleTextStyle"] copy];
+		titlePlotAreaFrameAnchor = [coder decodeIntegerForKey:@"CPTGraph.titlePlotAreaFrameAnchor"];
+		titleDisplacement = [coder decodeCPTPointForKey:@"CPTGraph.titleDisplacement"];
+		titleAnnotation = [[coder decodeObjectForKey:@"CPTGraph.titleAnnotation"] retain];
+		legend = [[coder decodeObjectForKey:@"CPTGraph.legend"] retain];
+		legendAnnotation = [[coder decodeObjectForKey:@"CPTGraph.legendAnnotation"] retain];
+		legendAnchor = [coder decodeIntegerForKey:@"CPTGraph.legendAnchor"];
+		legendDisplacement = [coder decodeCPTPointForKey:@"CPTGraph.legendDisplacement"];
+	}
+    return self;
+}
+
+#pragma mark -
+#pragma mark Animation
+
++(BOOL)needsDisplayForKey:(NSString *)aKey
+{
+	static NSArray *keys = nil;
+	
+	if ( !keys ) {
+		keys = [[NSArray alloc] initWithObjects:
+				@"titleDisplacement",
+				@"legendDisplacement", 
+				nil];
+	}
+	
+	if ( [keys containsObject:aKey] ) {
+		return YES;
+	}
+	else {
+		return [super needsDisplayForKey:aKey];
+	}
 }
 
 #pragma mark -
@@ -457,14 +530,6 @@ NSString * const CPTGraphNeedsRedrawNotification = @"CPTGraphNeedsRedrawNotifica
 -(void)applyTheme:(CPTTheme *)theme 
 {
     [theme applyThemeToGraph:self];
-}
-
-#pragma mark -
-#pragma mark Layout
-
-+(CGFloat)defaultZPosition 
-{
-	return CPTDefaultZPositionGraph;
 }
 
 #pragma mark -

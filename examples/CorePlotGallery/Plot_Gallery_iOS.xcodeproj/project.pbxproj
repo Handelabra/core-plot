@@ -38,6 +38,7 @@
 		C360E1C913B18ABC007994B6 /* OHLCPlot.m in Sources */ = {isa = PBXBuildFile; fileRef = C360E1C813B18ABC007994B6 /* OHLCPlot.m */; };
 		C360E1DA13B18B24007994B6 /* AxisDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = C360E1D913B18B24007994B6 /* AxisDemo.m */; };
 		C360E1EE13B18CCC007994B6 /* CandlestickPlot.m in Sources */ = {isa = PBXBuildFile; fileRef = C360E1ED13B18CCC007994B6 /* CandlestickPlot.m */; };
+		C367249F13E103AC0070F47A /* LineCapDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = C367249E13E103AC0070F47A /* LineCapDemo.m */; };
 		C39C4E3B13BFE19200CD9194 /* PlotSpaceDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = C39C4E3A13BFE19200CD9194 /* PlotSpaceDemo.m */; };
 		C39C4E3E13BFE19E00CD9194 /* LabelingPolicyDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = C39C4E3D13BFE19E00CD9194 /* LabelingPolicyDemo.m */; };
 		C3A14C1513AEE7CC00D103EA /* RangePlot.m in Sources */ = {isa = PBXBuildFile; fileRef = C3A14C1413AEE7CC00D103EA /* RangePlot.m */; };
@@ -114,6 +115,8 @@
 		C360E1D913B18B24007994B6 /* AxisDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AxisDemo.m; path = src/plots/AxisDemo.m; sourceTree = "<group>"; };
 		C360E1EC13B18CCC007994B6 /* CandlestickPlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CandlestickPlot.h; path = src/plots/CandlestickPlot.h; sourceTree = "<group>"; };
 		C360E1ED13B18CCC007994B6 /* CandlestickPlot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CandlestickPlot.m; path = src/plots/CandlestickPlot.m; sourceTree = "<group>"; };
+		C367249D13E103AC0070F47A /* LineCapDemo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LineCapDemo.h; path = src/plots/LineCapDemo.h; sourceTree = "<group>"; };
+		C367249E13E103AC0070F47A /* LineCapDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LineCapDemo.m; path = src/plots/LineCapDemo.m; sourceTree = "<group>"; };
 		C39C4E3913BFE19200CD9194 /* PlotSpaceDemo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlotSpaceDemo.h; path = src/plots/PlotSpaceDemo.h; sourceTree = "<group>"; };
 		C39C4E3A13BFE19200CD9194 /* PlotSpaceDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlotSpaceDemo.m; path = src/plots/PlotSpaceDemo.m; sourceTree = "<group>"; };
 		C39C4E3C13BFE19E00CD9194 /* LabelingPolicyDemo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LabelingPolicyDemo.h; path = src/plots/LabelingPolicyDemo.h; sourceTree = "<group>"; };
@@ -251,6 +254,8 @@
 				4F22FE3F123404C2006BF615 /* GradientScatterPlot.m */,
 				C39C4E3C13BFE19E00CD9194 /* LabelingPolicyDemo.h */,
 				C39C4E3D13BFE19E00CD9194 /* LabelingPolicyDemo.m */,
+				C367249D13E103AC0070F47A /* LineCapDemo.h */,
+				C367249E13E103AC0070F47A /* LineCapDemo.m */,
 				C360E1C713B18ABC007994B6 /* OHLCPlot.h */,
 				C360E1C813B18ABC007994B6 /* OHLCPlot.m */,
 				C39C4E3913BFE19200CD9194 /* PlotSpaceDemo.h */,
@@ -297,6 +302,9 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0410;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Plot_Gallery_iOS" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -378,6 +386,7 @@
 				C39C4E3B13BFE19200CD9194 /* PlotSpaceDemo.m in Sources */,
 				C39C4E3E13BFE19E00CD9194 /* LabelingPolicyDemo.m in Sources */,
 				C354C0D413C7CDA900DA8822 /* RealTimePlot.m in Sources */,
+				C367249F13E103AC0070F47A /* LineCapDemo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,6 +410,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Plot_Gallery_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/../../build/${BUILD_STYLE}-${PLATFORM_NAME}/\"/**";
 				INFOPLIST_FILE = "Plot_Gallery-Info.plist";
 				OTHER_LDFLAGS = (
@@ -420,6 +430,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Plot_Gallery_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/../../build/${BUILD_STYLE}-${PLATFORM_NAME}/\"/**";
 				INFOPLIST_FILE = "Plot_Gallery-Info.plist";
 				OTHER_LDFLAGS = (
@@ -442,7 +453,6 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
-				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -458,7 +468,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};

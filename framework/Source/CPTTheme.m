@@ -1,22 +1,11 @@
-
 #import "CPTTheme.h"
 #import "CPTExceptions.h"
-#import "CPTDarkGradientTheme.h"
-#import "CPTPlainBlackTheme.h"
-#import "CPTPlainWhiteTheme.h"
-#import "CPTStocksTheme.h"
-#import "CPTSlateTheme.h"
 #import "CPTGraph.h"
 
-// theme names
-NSString * const kCPTDarkGradientTheme = @"Dark Gradients";	///< Dark gradient theme.
-NSString * const kCPTPlainWhiteTheme = @"Plain White";		///< Plain white theme.
-NSString * const kCPTPlainBlackTheme = @"Plain Black";		///< Plain black theme.
-NSString * const kCPTSlateTheme = @"Slate";		  			///< Slate theme.
-NSString * const kCPTStocksTheme = @"Stocks";				///< Stocks theme.
+///	@defgroup themeNames Theme Names
 
 // Registered themes
-static NSMutableDictionary *themes = nil;
+static NSMutableSet *themes = nil;
 
 /** @brief Creates a CPTGraph instance formatted with predefined themes.
  *
@@ -24,23 +13,17 @@ static NSMutableDictionary *themes = nil;
  **/
 @implementation CPTTheme
 
-/** @property name
- *	@brief The name of the theme.
- **/
-@synthesize name;
-
-#pragma mark -
-#pragma mark Init/dealloc
-
 /** @property graphClass
  *	@brief The class used to create new graphs. Must be a subclass of CPTGraph.
  **/
 @synthesize graphClass;
 
+#pragma mark -
+#pragma mark Init/dealloc
+
 -(id)init
 {
 	if ( (self = [super init]) ) {
-		name = nil;
 		graphClass = Nil;
 	}
 	return self;
@@ -48,36 +31,40 @@ static NSMutableDictionary *themes = nil;
 
 -(void)dealloc
 {
-	[name release];
 	[graphClass release];
 	[super dealloc];
 }
 
 #pragma mark -
-#pragma mark Accessors
+#pragma mark NSCoding methods
 
--(void)setGraphClass:(Class)newGraphClass
+-(void)encodeWithCoder:(NSCoder *)coder
 {
-	if ( graphClass != newGraphClass ) {
-		if ( [newGraphClass isEqual:[CPTGraph class]] ) {
-			[NSException raise:CPTException format:@"Invalid graph class for theme; must be a subclass of CPTGraph"];
-		} else
-		{
-			[graphClass release];
-			graphClass = [newGraphClass retain];
-		}
-	}
+	[coder encodeObject:[[self class] name] forKey:@"CPTTheme.name"];
+	[coder encodeObject:NSStringFromClass(self.graphClass) forKey:@"CPTTheme.graphClass"];
 }
 
-/**	@brief List of the available themes.
- *	@return An NSArray with all available themes.
+-(id)initWithCoder:(NSCoder *)coder
+{
+	[self release];
+	self = [[CPTTheme themeNamed:[coder decodeObjectForKey:@"CPTTheme.name"]] retain];
+	
+    if ( self ) {
+		self.graphClass = NSClassFromString([coder decodeObjectForKey:@"CPTTheme.graphClass"]);
+	}
+    return self;
+}
+
+#pragma mark -
+#pragma mark Theme management
+
+/**	@brief List of the available theme classes, sorted by name.
+ *	@return An NSArray containing all available theme classes, sorted by name.
  **/
 +(NSArray *)themeClasses {
-	static NSArray *themeClasses = nil;
-	if ( themeClasses == nil ) {
-		themeClasses = [[NSArray alloc] initWithObjects:[CPTDarkGradientTheme class], [CPTPlainBlackTheme class], [CPTPlainWhiteTheme class],  [CPTSlateTheme class], [CPTStocksTheme class], nil];
-	}
-	return themeClasses;
+	NSSortDescriptor *nameSort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)];
+	
+	return [themes sortedArrayUsingDescriptors:[NSArray arrayWithObject:nameSort]];
 }
 
 /**	@brief Gets a named theme.
@@ -86,48 +73,66 @@ static NSMutableDictionary *themes = nil;
  **/
 +(CPTTheme *)themeNamed:(NSString *)themeName
 {
-	if ( themes == nil ) themes = [[NSMutableDictionary alloc] init];
+	CPTTheme *newTheme = nil;
 	
-	CPTTheme *theme = [themes objectForKey:themeName];
-	if ( theme ) return theme;
-	
-	for ( Class themeClass in [CPTTheme themeClasses] ) {
-		if ( [themeName isEqualToString:[themeClass defaultName]] ) {
-			theme = [[themeClass alloc] init];
-			[themes setObject:theme forKey:themeName];
+	for ( Class themeClass in themes ) {
+		if ( [themeName isEqualToString:[themeClass name]] ) {
+			newTheme = [[themeClass alloc] init];
 			break;
 		}
 	}
 	
-	return [theme autorelease];
+	return [newTheme autorelease];
 }
 
-/**	@brief Register a theme for a given name.
- *	@param newTheme Theme to register.
+/**	@brief Register a theme class.
+ *	@param themeClass Theme class to register.
  **/
-+(void)addTheme:(CPTTheme *)newTheme
++(void)registerTheme:(Class)themeClass
 {
-    CPTTheme *existingTheme = [self themeNamed:newTheme.name];
-    if ( existingTheme ) {
-        [NSException raise:CPTException format:@"Theme already exists with name %@", newTheme.name];
-    }
-    
-    [themes setObject:newTheme forKey:newTheme.name];
+	@synchronized(self) {
+		if ( !themes ) {
+			themes = [[NSMutableSet alloc] init];
+		}
+
+		if ( [themes containsObject:themeClass] ) {
+			[NSException raise:CPTException format:@"Theme class already registered: %@", themeClass];
+		}
+		else {
+			[themes addObject:themeClass];
+		}
+	}
 }
 
-/**	@brief The name used by default for this theme class.
+/**	@brief The name used for this theme class.
  *	@return The name.
  **/
-+(NSString *)defaultName 
++(NSString *)name 
 {
 	return NSStringFromClass(self);
 }
 
--(NSString *)name 
+#pragma mark -
+#pragma mark Accessors
+
+-(void)setGraphClass:(Class)newGraphClass
 {
-	return [[(name ? name : [[self class] defaultName]) copy] autorelease]
-	;
+	if ( graphClass != newGraphClass ) {
+		if ( ![newGraphClass isSubclassOfClass:[CPTGraph class]] ) {
+			[NSException raise:CPTException format:@"Invalid graph class for theme; must be a subclass of CPTGraph"];
+		}
+		else if ( [newGraphClass isEqual:[CPTGraph class]] ) {
+			[NSException raise:CPTException format:@"Invalid graph class for theme; must be a subclass of CPTGraph"];
+		}
+		else {
+			[graphClass release];
+			graphClass = [newGraphClass retain];
+		}
+	}
 }
+
+#pragma mark -
+#pragma mark Apply the theme
 
 /**	@brief Applies the theme to the provided graph.
  *	@param graph The graph to style.

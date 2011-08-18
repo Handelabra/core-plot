@@ -1,5 +1,5 @@
+#import "_CPTXYTheme.h"
 
-#import "CPTXYTheme.h"
 #import "CPTPlotRange.h"
 #import "CPTXYGraph.h"
 #import "CPTXYPlotSpace.h"
@@ -7,7 +7,7 @@
 
 /** @brief Creates a CPTXYGraph instance formatted with padding of 60 on each side and X and Y plot ranges of +/- 1.
  **/
-@implementation CPTXYTheme
+@implementation _CPTXYTheme
 
 -(id)init
 {
@@ -38,6 +38,14 @@
     [self applyThemeToGraph:graph];
     
 	return graph;
+}
+
+#pragma mark -
+#pragma mark NSCoding methods
+
+-(Class)classForCoder
+{
+	return [CPTTheme class];
 }
 
 @end

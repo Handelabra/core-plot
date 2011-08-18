@@ -14,7 +14,7 @@
 @class CPTTextLayer;
 @class CPTTextStyle;
 
-/// @name Binding Identifiers
+///	@ingroup plotBindingsBarPlot
 /// @{
 extern NSString * const CPTBarPlotBindingBarLocations;
 extern NSString * const CPTBarPlotBindingBarTips;
@@ -42,16 +42,6 @@ typedef enum _CPTBarPlotField {
  *	@return The bar fill for the point with the given index.
  **/
 -(CPTFill *)barFillForBarPlot:(CPTBarPlot *)barPlot recordIndex:(NSUInteger)index; 
-
-/** @brief Gets a bar label for the given bar plot. This method is no longer used.
- *	@param barPlot The bar plot.
- *	@param index The data index of interest.
- *	@return The bar label for the point with the given index.
- *  If you return nil, the default bar label will be used. If you return an instance of NSNull,
- *  no label will be shown for the index in question.
- *	@deprecated This method has been replaced by the CPTPlotDataSource::dataLabelForPlot:recordIndex: method and is no longer used.
- **/
--(CPTTextLayer *)barLabelForBarPlot:(CPTBarPlot *)barPlot recordIndex:(NSUInteger)index;
 
 @end 
 
@@ -83,7 +73,9 @@ typedef enum _CPTBarPlotField {
     CPTLineStyle *lineStyle;
     CPTFill *fill;
     NSDecimal barWidth;
+	CGFloat barWidthScale;
     NSDecimal barOffset;
+    CGFloat barOffsetScale;
     CGFloat barCornerRadius;
     NSDecimal baseValue;	
     BOOL barsAreHorizontal;
@@ -94,7 +86,9 @@ typedef enum _CPTBarPlotField {
 
 @property (nonatomic, readwrite, assign) BOOL barWidthsAreInViewCoordinates;
 @property (nonatomic, readwrite, assign) NSDecimal barWidth;
+@property (nonatomic, readwrite, assign) CGFloat barWidthScale;
 @property (nonatomic, readwrite, assign) NSDecimal barOffset;
+@property (nonatomic, readwrite, assign) CGFloat barOffsetScale;
 @property (nonatomic, readwrite, assign) CGFloat barCornerRadius;
 @property (nonatomic, readwrite, copy) CPTLineStyle *lineStyle;
 @property (nonatomic, readwrite, copy) CPTFill *fill;
@@ -102,8 +96,6 @@ typedef enum _CPTBarPlotField {
 @property (nonatomic, readwrite, assign) NSDecimal baseValue;
 @property (nonatomic, readwrite, assign) BOOL barBasesVary;
 @property (nonatomic, readwrite, copy) CPTPlotRange *plotRange;
-@property (nonatomic, readwrite, assign) CGFloat barLabelOffset;
-@property (nonatomic, readwrite, copy) CPTTextStyle *barLabelTextStyle;
 
 /// @name Factory Methods
 /// @{

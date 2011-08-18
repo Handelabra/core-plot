@@ -11,7 +11,18 @@
 #import "CPTUtilities.h"
 #import "CPTTextLayer.h"
 #import "CPTLineStyle.h"
+#import "NSCoderExtensions.h"
 #import <tgmath.h>
+
+/**	@defgroup plotAnimationPieChart Pie Chart
+ *	@ingroup plotAnimation
+ **/
+
+/**	@if MacOnly
+ *	@defgroup plotBindingsPieChart Pie Chart Bindings
+ *	@ingroup plotBindings
+ *	@endif
+ **/
 
 NSString * const CPTPieChartBindingPieSliceWidthValues = @"sliceWidths";		///< Pie slice widths.
 
@@ -43,22 +54,19 @@ NSString * const CPTPieChartBindingPieSliceWidthValues = @"sliceWidths";		///< P
 
 /** @property pieRadius
  *	@brief The radius of the overall pie chart. Defaults to 80% of the initial frame size.
+ *	@ingroup plotAnimationPieChart
  **/
 @synthesize pieRadius;
 
 /** @property pieInnerRadius
  *	@brief The inner radius of the pie chart, used to create a "donut hole". Defaults to 0.
+ *	@ingroup plotAnimationPieChart
  **/
 @synthesize pieInnerRadius;
 
-/** @property sliceLabelOffset
- *	@brief The radial offset of the slice labels from the edge of each slice. Defaults to 10.0
- *	@deprecated This property has been replaced by the CPTPlot::labelOffset property.
- **/
-@dynamic sliceLabelOffset;
-
 /** @property startAngle
  *	@brief The starting angle for the first slice in radians. Defaults to pi/2.
+ *	@ingroup plotAnimationPieChart
  **/
 @synthesize startAngle;
 
@@ -71,6 +79,7 @@ NSString * const CPTPieChartBindingPieSliceWidthValues = @"sliceWidths";		///< P
 /** @property centerAnchor
  *	@brief The position of the center of the pie chart with the x and y coordinates
  *	given as a fraction of the width and height, respectively. Defaults to (0.5, 0.5).
+ *	@ingroup plotAnimationPieChart
  **/
 @synthesize centerAnchor;
 
@@ -157,6 +166,33 @@ static const CGFloat colorLookupTable[10][3] =
 	[super dealloc];
 }
 
+-(void)encodeWithCoder:(NSCoder *)coder
+{
+	[super encodeWithCoder:coder];
+
+	[coder encodeCGFloat:self.pieRadius forKey:@"CPTPieChart.pieRadius"];
+	[coder encodeCGFloat:self.pieInnerRadius forKey:@"CPTPieChart.pieInnerRadius"];
+	[coder encodeCGFloat:self.startAngle forKey:@"CPTPieChart.startAngle"];
+	[coder encodeInteger:self.sliceDirection forKey:@"CPTPieChart.sliceDirection"];
+	[coder encodeCPTPoint:self.centerAnchor forKey:@"CPTPieChart.centerAnchor"];
+	[coder encodeObject:self.borderLineStyle forKey:@"CPTPieChart.borderLineStyle"];
+	[coder encodeObject:self.overlayFill forKey:@"CPTPieChart.overlayFill"];
+}
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+    if ( (self = [super initWithCoder:coder]) ) {
+		pieRadius = [coder decodeCGFloatForKey:@"CPTPieChart.pieRadius"];
+		pieInnerRadius = [coder decodeCGFloatForKey:@"CPTPieChart.pieInnerRadius"];
+		startAngle = [coder decodeCGFloatForKey:@"CPTPieChart.startAngle"];
+		sliceDirection = [coder decodeIntegerForKey:@"CPTPieChart.sliceDirection"];
+		centerAnchor = [coder decodeCPTPointForKey:@"CPTPieChart.centerAnchor"];
+		borderLineStyle = [[coder decodeObjectForKey:@"CPTPieChart.borderLineStyle"] copy];
+		overlayFill = [[coder decodeObjectForKey:@"CPTPieChart.overlayFill"] copy];
+	}
+    return self;
+}
+
 #pragma mark -
 #pragma mark Data Loading
 
@@ -219,9 +255,9 @@ static const CGFloat colorLookupTable[10][3] =
 			CPTNumericDataType dataType = CPTDataType(CPTFloatingPointDataType, sizeof(double), CFByteOrderGetCurrent());
 			
 			CPTMutableNumericData *normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil];
-			((NSMutableData *)normalizedSliceValues.data).length = sampleCount * sizeof(double);
+			normalizedSliceValues.shape = [NSArray arrayWithObject:[NSNumber numberWithUnsignedInteger:sampleCount]];
 			CPTMutableNumericData *cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil];
-			((NSMutableData *)cumulativeSliceValues.data).length = sampleCount * sizeof(double);
+			cumulativeSliceValues.shape = [NSArray arrayWithObject:[NSNumber numberWithUnsignedInteger:sampleCount]];
 			
 			double cumulativeSum = 0.0;
 			
@@ -258,9 +294,9 @@ static const CGFloat colorLookupTable[10][3] =
 			CPTNumericDataType dataType = CPTDataType(CPTDecimalDataType, sizeof(NSDecimal), CFByteOrderGetCurrent());
 			
 			CPTMutableNumericData *normalizedSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil];
-			((NSMutableData *)normalizedSliceValues.data).length = sampleCount * sizeof(NSDecimal);
+			normalizedSliceValues.shape = [NSArray arrayWithObject:[NSNumber numberWithUnsignedInteger:sampleCount]];
 			CPTMutableNumericData *cumulativeSliceValues = [[CPTMutableNumericData alloc] initWithData:[NSData data] dataType:dataType shape:nil];
-			((NSMutableData *)cumulativeSliceValues.data).length = sampleCount * sizeof(NSDecimal);
+			cumulativeSliceValues.shape = [NSArray arrayWithObject:[NSNumber numberWithUnsignedInteger:sampleCount]];
 			
 			NSDecimal cumulativeSum = CPTDecimalFromInteger(0);
 			
@@ -483,6 +519,30 @@ static const CGFloat colorLookupTable[10][3] =
 		}
 		
 		CGPathRelease(swatchPath);
+	}
+}
+
+#pragma mark -
+#pragma mark Animation
+
++(BOOL)needsDisplayForKey:(NSString *)aKey
+{
+	static NSArray *keys = nil;
+	
+	if ( !keys ) {
+		keys = [[NSArray alloc] initWithObjects:
+				@"pieRadius",
+				@"pieInnerRadius", 
+				@"startAngle", 
+				@"centerAnchor", 
+				nil];
+	}
+	
+	if ( [keys containsObject:aKey] ) {
+		return YES;
+	}
+	else {
+		return [super needsDisplayForKey:aKey];
 	}
 }
 
@@ -787,7 +847,7 @@ static const CGFloat colorLookupTable[10][3] =
     if ( pieRadius != newPieRadius ) {
         pieRadius = ABS(newPieRadius);
         [self setNeedsDisplay];
-		[self setNeedsRelabel];
+		[self repositionAllLabelAnnotations];
     }
 }
 
@@ -804,7 +864,7 @@ static const CGFloat colorLookupTable[10][3] =
     if ( newAngle != startAngle ) {
         startAngle = newAngle;
         [self setNeedsDisplay];
-        [self setNeedsRelabel];
+		[self repositionAllLabelAnnotations];
     }
 }
 
@@ -813,7 +873,7 @@ static const CGFloat colorLookupTable[10][3] =
     if ( newDirection != sliceDirection ) {
         sliceDirection = newDirection;
         [self setNeedsDisplay];
-        [self setNeedsRelabel];
+		[self repositionAllLabelAnnotations];
     }
 }
 
@@ -832,18 +892,8 @@ static const CGFloat colorLookupTable[10][3] =
     if ( !CGPointEqualToPoint(centerAnchor, newCenterAnchor) ) {
         centerAnchor = newCenterAnchor;
         [self setNeedsDisplay];
-		[self setNeedsRelabel];
+		[self repositionAllLabelAnnotations];
     }
-}
-
--(CGFloat)sliceLabelOffset
-{
-	return self.labelOffset;
-}
-
--(void)setSliceLabelOffset:(CGFloat)newOffset 
-{
-    self.labelOffset = newOffset;
 }
 
 @end

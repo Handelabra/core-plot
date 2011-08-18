@@ -2,11 +2,6 @@
 #import "CPTLayer.h"
 #import "CPTAxisSet.h"
 
-/**	@brief Plot space coordinate change notification.
- *
- *	This notification is posted to the default notification center whenever the mapping between
- *	the plot space coordinate system and drawing coordinates changes.
- **/
 NSString * const CPTPlotSpaceCoordinateMappingDidChangeNotification = @"CPTPlotSpaceCoordinateMappingDidChangeNotification";
 
 /**	@brief Defines the coordinate system of a plot.
@@ -53,6 +48,30 @@ NSString * const CPTPlotSpaceCoordinateMappingDidChangeNotification = @"CPTPlotS
 	graph = nil;
 	[identifier release];
 	[super dealloc];
+}
+
+#pragma mark -
+#pragma mark NSCoding methods
+
+-(void)encodeWithCoder:(NSCoder *)coder
+{
+	[coder encodeConditionalObject:self.graph forKey:@"CPTPlotSpace.graph"];
+	[coder encodeObject:self.identifier forKey:@"CPTPlotSpace.identifier"];
+	if ( [self.delegate conformsToProtocol:@protocol(NSCoding)] ) {
+		[coder encodeConditionalObject:self.delegate forKey:@"CPTPlotSpace.delegate"];
+	}
+	[coder encodeBool:self.allowsUserInteraction forKey:@"CPTPlotSpace.allowsUserInteraction"];
+}
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+    if ( (self = [super init]) ) {
+		graph = [coder decodeObjectForKey:@"CPTPlotSpace.graph"];
+		identifier = [[coder decodeObjectForKey:@"CPTPlotSpace.identifier"] copy];
+		delegate = [coder decodeObjectForKey:@"CPTPlotSpace.delegate"];
+		allowsUserInteraction = [coder decodeBoolForKey:@"CPTPlotSpace.allowsUserInteraction"];
+	}
+    return self;
 }
 
 #pragma mark -

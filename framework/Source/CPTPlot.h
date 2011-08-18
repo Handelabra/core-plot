@@ -81,21 +81,6 @@ typedef enum _CPTPlotCachePrecision {
 
 ///	@}
 
-/// @name Data Range
-/// @{
-
-/**	@brief Determines the record index range corresponding to a given range of data.
- *	This method is optional. If the method is implemented, it could improve performance
- *  in data sets that are only partially displayed.
- *	@param plot The plot.
- *	@param plotRange The range expressed in data values.
- *	@return The range of record indexes.
- *	@deprecated This method is no longer used and will be removed from a later release.
- **/
--(NSRange)recordIndexRangeForPlot:(CPTPlot *)plot plotRange:(CPTPlotRange *)plotRange;
-
-///	@}
-
 /// @name Data Labels
 /// @{
 
@@ -117,7 +102,7 @@ typedef enum _CPTPlotCachePrecision {
 @interface CPTPlot : CPTAnnotationHostLayer {
 	@private
     id <CPTPlotDataSource> dataSource;
-    id <NSCopying, NSObject> identifier;
+    id <NSCopying, NSCoding, NSObject> identifier;
 	NSString *title;
     CPTPlotSpace *plotSpace;
     BOOL dataNeedsReloading;
@@ -128,11 +113,12 @@ typedef enum _CPTPlotCachePrecision {
 	CGFloat labelOffset;
     CGFloat labelRotation;
 	NSUInteger labelField;
-	CPTMutableTextStyle *labelTextStyle;
+	CPTTextStyle *labelTextStyle;
 	NSNumberFormatter *labelFormatter;
 	BOOL labelFormatterChanged;
 	NSRange labelIndexRange;
 	NSMutableArray *labelAnnotations;
+	CPTShadow *labelShadow;
 }
 
 /// @name Data Source
@@ -142,7 +128,7 @@ typedef enum _CPTPlotCachePrecision {
 
 /// @name Identification
 /// @{
-@property (nonatomic, readwrite, copy) id <NSCopying, NSObject> identifier;
+@property (nonatomic, readwrite, copy) id <NSCopying, NSCoding, NSObject> identifier;
 @property (nonatomic, readwrite, copy) NSString *title;
 ///	@}
 
@@ -176,8 +162,9 @@ typedef enum _CPTPlotCachePrecision {
 @property (nonatomic, readwrite, assign) CGFloat labelOffset;
 @property (nonatomic, readwrite, assign) CGFloat labelRotation;
 @property (nonatomic, readwrite, assign) NSUInteger labelField;
-@property (nonatomic, readwrite, copy) CPTMutableTextStyle *labelTextStyle;
+@property (nonatomic, readwrite, copy) CPTTextStyle *labelTextStyle;
 @property (nonatomic, readwrite, retain) NSNumberFormatter *labelFormatter;
+@property (nonatomic, readwrite, retain) CPTShadow *labelShadow;
 ///	@}
 
 /// @name Data Labels
@@ -185,6 +172,7 @@ typedef enum _CPTPlotCachePrecision {
 -(void)setNeedsRelabel;
 -(void)relabel;
 -(void)relabelIndexRange:(NSRange)indexRange;
+-(void)repositionAllLabelAnnotations;
 ///	@}
 
 /// @name Data Loading

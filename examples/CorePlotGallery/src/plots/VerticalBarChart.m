@@ -186,7 +186,7 @@
 
     CPTMutableTextStyle *whiteTextStyle = [CPTMutableTextStyle textStyle];
     whiteTextStyle.color = [CPTColor whiteColor];
-    barPlot.barLabelTextStyle = whiteTextStyle;
+    barPlot.labelTextStyle = whiteTextStyle;
  
 	barPlot.delegate = self;
     barPlot.dataSource = self;
@@ -245,6 +245,8 @@
 	legendAnnotation.contentAnchorPoint = CGPointMake(0.0, 1.0);
 #endif
 	[graph.plotAreaFrame.plotArea addAnnotation:legendAnnotation];
+	
+	[graph release];
 }
 
 - (void)dealloc

@@ -32,7 +32,7 @@
 @dynamic mutableBytes;
 
 /** @property shape
- *	@brief The shape of the data buffer array.
+ *	@brief The shape of the data buffer array. Set a new shape to change the size of the data buffer.
  *
  *	The shape describes the dimensions of the sample array stored in
  *	the data buffer. Each entry in the shape array represents the
@@ -106,7 +106,7 @@
 	
     data = [newData mutableCopy];
     dataType = newDataType;
-    
+	
     if ( shapeArray == nil ) {
         shape = [[NSArray arrayWithObject:[NSNumber numberWithUnsignedInteger:self.numberOfSamples]] retain];
     }
@@ -133,15 +133,26 @@
 	return [(NSMutableData *)self.data mutableBytes];
 }
 
+-(void)setShape:(NSArray *)newShape
+{
+	if ( newShape != shape ) {
+		[shape release];
+		shape = [newShape copy];
+
+		NSUInteger sampleCount = 1;
+        for ( NSNumber *num in shape ) {
+            sampleCount *= [num unsignedIntegerValue];
+        }
+		
+		((NSMutableData *)data).length = sampleCount * self.sampleBytes;
+	}
+}
+
 #pragma mark -
 #pragma mark NSMutableCopying
 
 -(id)mutableCopyWithZone:(NSZone *)zone 
 {
-    if ( NSShouldRetainWithZone(self, zone)) {
-        return [self retain];
-    }
-    
     return [[CPTMutableNumericData allocWithZone:zone] initWithData:self.data
 														  dataType:self.dataType
                                                              shape:self.shape];
@@ -168,9 +179,9 @@
         [encoder encodeObject:self.data forKey:@"data"];
         
 		CPTNumericDataType selfDataType = self.dataType;
-		[encoder encodeInteger:selfDataType.dataTypeFormat forKey:@"dataType.dataTypeFormat"];
-        [encoder encodeInteger:selfDataType.sampleBytes forKey:@"dataType.sampleBytes"];
-        [encoder encodeInteger:selfDataType.byteOrder forKey:@"dataType.byteOrder"];
+		[encoder encodeInteger:selfDataType.dataTypeFormat forKey:@"CPTMutableNumericData.dataType.dataTypeFormat"];
+        [encoder encodeInteger:selfDataType.sampleBytes forKey:@"CPTMutableNumericData.dataType.sampleBytes"];
+        [encoder encodeInteger:selfDataType.byteOrder forKey:@"CPTMutableNumericData.dataType.byteOrder"];
         
         [encoder encodeObject:self.shape forKey:@"shape"];
     }
@@ -196,9 +207,9 @@
 		if ( [decoder allowsKeyedCoding] ) {
 			newData = [decoder decodeObjectForKey:@"data"];
 			
-			newDataType = CPTDataType([decoder decodeIntegerForKey:@"dataType.dataTypeFormat"],
-									 [decoder decodeIntegerForKey:@"dataType.sampleBytes"],
-									 [decoder decodeIntegerForKey:@"dataType.byteOrder"]);
+			newDataType = CPTDataType([decoder decodeIntegerForKey:@"CPTMutableNumericData.dataType.dataTypeFormat"],
+									 [decoder decodeIntegerForKey:@"CPTMutableNumericData.dataType.sampleBytes"],
+									 [decoder decodeIntegerForKey:@"CPTMutableNumericData.dataType.byteOrder"]);
 			
 			shapeArray = [decoder decodeObjectForKey:@"shape"];
 		}

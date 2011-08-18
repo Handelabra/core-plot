@@ -15,9 +15,27 @@
 #import "CPTPlotSpace.h"
 #import "CPTPlotSpaceAnnotation.h"
 #import "CPTTextLayer.h"
-#import "NSNumberExtensions.h"
 #import "CPTUtilities.h"
+#import "NSCoderExtensions.h"
+#import "NSNumberExtensions.h"
 #import <tgmath.h>
+
+/**	@defgroup plotAnimation Plots
+ *	@brief Plot properties that can be animated using Core Animation.
+ *	@if MacOnly
+ *	@since Custom layer property animation is supported on MacOS 10.6 and later.
+ *	@endif
+ *	@ingroup animation
+ **/
+
+/**	@defgroup plotAnimationAllPlots All Plots
+ *	@ingroup plotAnimation
+ **/
+
+/**	@if MacOnly
+ *	@defgroup plotBindings Plot Binding Identifiers
+ *	@endif
+ **/
 
 /**	@cond */
 @interface CPTPlot()
@@ -111,12 +129,14 @@
 
 /**	@property labelOffset
  *	@brief The distance that labels should be offset from their anchor points. The direction of the offset is defined by subclasses.
+ *	@ingroup plotAnimationAllPlots
  **/
 @synthesize labelOffset;
 
 /**	@property labelRotation
  *	@brief The rotation of the data labels in radians.
  *  Set this property to <code>M_PI/2.0</code> to have labels read up the screen, for example.
+ *	@ingroup plotAnimationAllPlots
  **/
 @synthesize labelRotation;
 
@@ -139,6 +159,11 @@
  *  The CPTTimeFormatter is useful for this purpose.
  **/
 @synthesize labelFormatter;
+
+/**	@property labelShadow
+ *	@brief The shadow applied to each data label.
+ **/
+@synthesize labelShadow;
 
 @synthesize labelFormatterChanged;
 
@@ -166,6 +191,7 @@
 		labelField = 0;
 		labelTextStyle = nil;
 		labelFormatter = nil;
+		labelShadow = nil;
 		labelFormatterChanged = YES;
 		labelIndexRange = NSMakeRange(0, 0);
 		labelAnnotations = nil;
@@ -195,6 +221,7 @@
 		labelField = theLayer->labelField;
 		labelTextStyle = [theLayer->labelTextStyle retain];
 		labelFormatter = [theLayer->labelFormatter retain];
+		labelShadow = [theLayer->labelShadow retain];
 		labelFormatterChanged = theLayer->labelFormatterChanged;
 		labelIndexRange = theLayer->labelIndexRange;
 		labelAnnotations = [theLayer->labelAnnotations retain];
@@ -210,9 +237,67 @@
     [plotSpace release];
 	[labelTextStyle release];
 	[labelFormatter release];
+	[labelShadow release];
 	[labelAnnotations release];
 	
     [super dealloc];
+}
+
+#pragma mark -
+#pragma mark NSCoding methods
+
+-(void)encodeWithCoder:(NSCoder *)coder
+{
+	[super encodeWithCoder:coder];
+
+	if ( [self.dataSource conformsToProtocol:@protocol(NSCoding)] ) {
+		[coder encodeConditionalObject:self.dataSource forKey:@"CPTPlot.dataSource"];
+	}
+	[coder encodeObject:self.identifier forKey:@"CPTPlot.identifier"];
+	[coder encodeObject:self.title forKey:@"CPTPlot.title"];
+	[coder encodeObject:self.plotSpace forKey:@"CPTPlot.plotSpace"];
+	[coder encodeInteger:self.cachePrecision forKey:@"CPTPlot.cachePrecision"];
+	[coder encodeBool:self.needsRelabel forKey:@"CPTPlot.needsRelabel"];
+	[coder encodeCGFloat:self.labelOffset forKey:@"CPTPlot.labelOffset"];
+	[coder encodeCGFloat:self.labelRotation forKey:@"CPTPlot.labelRotation"];
+	[coder encodeInteger:self.labelField forKey:@"CPTPlot.labelField"];
+	[coder encodeObject:self.labelTextStyle forKey:@"CPTPlot.labelTextStyle"];
+	[coder encodeObject:self.labelFormatter forKey:@"CPTPlot.labelFormatter"];
+	[coder encodeObject:self.labelShadow forKey:@"CPTPlot.labelShadow"];
+	[coder encodeBool:self.labelFormatterChanged forKey:@"CPTPlot.labelFormatterChanged"];
+	[coder encodeObject:[NSValue valueWithRange:self.labelIndexRange] forKey:@"CPTPlot.labelIndexRange"];
+	[coder encodeObject:self.labelAnnotations forKey:@"CPTPlot.labelAnnotations"];
+
+	// No need to archive these properties:
+	// dataNeedsReloading
+	// cachedData
+	// cachedDataCount
+}
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+    if ( (self = [super initWithCoder:coder]) ) {
+		dataSource = [coder decodeObjectForKey:@"CPTPlot.dataSource"];
+		identifier = [[coder decodeObjectForKey:@"CPTPlot.identifier"] copy];
+		title = [[coder decodeObjectForKey:@"CPTPlot.title"] copy];
+		plotSpace = [[coder decodeObjectForKey:@"CPTPlot.plotSpace"] retain];
+		cachePrecision = [coder decodeIntegerForKey:@"CPTPlot.cachePrecision"];
+		needsRelabel = [coder decodeBoolForKey:@"CPTPlot.needsRelabel"];
+		labelOffset = [coder decodeCGFloatForKey:@"CPTPlot.labelOffset"];
+		labelRotation = [coder decodeCGFloatForKey:@"CPTPlot.labelRotation"];
+		labelField = [coder decodeIntegerForKey:@"CPTPlot.labelField"];
+		labelTextStyle = [[coder decodeObjectForKey:@"CPTPlot.labelTextStyle"] copy];
+		labelFormatter = [[coder decodeObjectForKey:@"CPTPlot.labelFormatter"] retain];
+		labelShadow = [[coder decodeObjectForKey:@"CPTPlot.labelShadow"] retain];
+		labelFormatterChanged = [coder decodeBoolForKey:@"CPTPlot.labelFormatterChanged"];
+		labelIndexRange = [[coder decodeObjectForKey:@"CPTPlot.labelIndexRange"] rangeValue];
+		labelAnnotations = [[coder decodeObjectForKey:@"CPTPlot.labelAnnotations"] mutableCopy];
+		
+		cachedData = [[NSMutableDictionary alloc] initWithCapacity:5];
+		cachedDataCount = 0;
+		dataNeedsReloading = YES;
+	}
+    return self;
 }
 
 #pragma mark -
@@ -238,12 +323,29 @@
 }
 
 #pragma mark -
-#pragma mark Layout
+#pragma mark Animation
 
-+(CGFloat)defaultZPosition 
++(BOOL)needsDisplayForKey:(NSString *)aKey
 {
-	return CPTDefaultZPositionPlot;
+	static NSArray *keys = nil;
+	
+	if ( !keys ) {
+		keys = [[NSArray alloc] initWithObjects:
+				@"labelOffset",
+				@"labelRotation", 
+				nil];
+	}
+	
+	if ( [keys containsObject:aKey] ) {
+		return YES;
+	}
+	else {
+		return [super needsDisplayForKey:aKey];
+	}
 }
+
+#pragma mark -
+#pragma mark Layout
 
 -(void)layoutSublayers 
 {
@@ -487,7 +589,7 @@
 				[self.cachedData setObject:cachedNumbers forKey:cacheKey];
 			}
 			NSUInteger numberOfRecords = [self.dataSource numberOfRecordsForPlot:self];
-			((NSMutableData *)cachedNumbers.data).length = numberOfRecords * cachedNumbers.sampleBytes;
+			cachedNumbers.shape = [NSArray arrayWithObject:[NSNumber numberWithUnsignedInteger:numberOfRecords]];
 			
 			// Update the cache
 			self.cachedDataCount = numberOfRecords;
@@ -720,7 +822,7 @@
     self.needsRelabel = NO;
 	
 	id <CPTPlotDataSource> theDataSource = self.dataSource;
-	CPTMutableTextStyle *dataLabelTextStyle = self.labelTextStyle;
+	CPTTextStyle *dataLabelTextStyle = self.labelTextStyle;
 	NSNumberFormatter *dataLabelFormatter = self.labelFormatter;
 	
 	BOOL dataSourceProvidesLabels = [theDataSource respondsToSelector:@selector(dataLabelForPlot:recordIndex:)];
@@ -751,6 +853,7 @@
 	NSUInteger oldLabelCount = labelArray.count;
 	Class nullClass = [NSNull class];
 	CPTMutableNumericData *labelFieldDataCache = [self cachedNumbersForField:self.labelField];
+	CPTShadow *theShadow = self.labelShadow;
 	
 	for ( NSUInteger i = indexRange.location; i < maxIndex; i++ ) {
 		CPTLayer *newLabelLayer = nil;
@@ -775,6 +878,7 @@
 				newLabelLayer = nil;
 			}
 		}
+		newLabelLayer.shadow = theShadow;
 		
 		CPTPlotSpaceAnnotation *labelAnnotation;
 		if ( i < oldLabelCount ) {
@@ -837,6 +941,18 @@
 	}
 	
 	label.contentAnchorPoint = CGPointMake((newAnchorX + 1.0) / 2.0, (newAnchorY + 1.0) / 2.0);
+}
+
+/**	@brief Repositions all existing label annotations.
+ **/
+-(void)repositionAllLabelAnnotations
+{
+	NSArray *annotations = self.labelAnnotations;
+	NSUInteger labelCount = annotations.count;
+	
+	for ( NSUInteger i = 0; i < labelCount; i++ ) {
+		[self positionLabelAnnotation:[annotations objectAtIndex:i] forIndex:i];
+	}
 }
 
 #pragma mark -
@@ -917,7 +1033,7 @@
     if ( newTitle != title ) {
         [title release];
         title = [newTitle copy];
-		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsLayoutForPlotNotification object:self];
     }
 }
 
@@ -954,7 +1070,7 @@
     }
 }
 
--(void)setLabelTextStyle:(CPTMutableTextStyle *)newStyle 
+-(void)setLabelTextStyle:(CPTTextStyle *)newStyle 
 {
 	if ( newStyle != labelTextStyle ) {
 		[labelTextStyle release];
@@ -977,7 +1093,7 @@
 {
     if ( newOffset != labelOffset ) {
         labelOffset = newOffset;
-		self.needsRelabel = YES;
+		[self repositionAllLabelAnnotations];
     }
 }
 
@@ -985,7 +1101,10 @@
 {
     if ( newRotation != labelRotation ) {
         labelRotation = newRotation;
-		self.needsRelabel = YES;
+		for ( CPTPlotSpaceAnnotation *label in self.labelAnnotations ) {
+			label.rotation = labelRotation;
+			[self updateContentAnchorForLabel:label];
+		}
     }
 }
 
@@ -997,6 +1116,17 @@
 		self.labelFormatterChanged = YES;
         self.needsRelabel = YES;
     }
+}
+
+-(void)setLabelShadow:(CPTShadow *)newLabelShadow
+{
+	if ( newLabelShadow != labelShadow ) {
+		[labelShadow release];
+		labelShadow = [newLabelShadow retain];
+		for ( CPTAnnotation *label in self.labelAnnotations ) {
+			label.contentLayer.shadow = labelShadow;
+		}
+	}
 }
 
 -(void)setCachePrecision:(CPTPlotCachePrecision)newPrecision

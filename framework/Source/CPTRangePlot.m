@@ -13,6 +13,17 @@
 #import "CPTXYPlotSpace.h"
 #import "CPTPlotSpace.h"
 #import "CPTFill.h"
+#import "NSCoderExtensions.h"
+
+/**	@defgroup plotAnimationRangePlot Range Plot
+ *	@ingroup plotAnimation
+ **/
+
+/**	@if MacOnly
+ *	@defgroup plotBindingsRangePlot Range Plot Bindings
+ *	@ingroup plotBindings
+ *	@endif
+ **/
 
 NSString * const CPTRangePlotBindingXValues = @"xValues";		///< X values.
 NSString * const CPTRangePlotBindingYValues = @"yValues";		///< Y values.
@@ -73,18 +84,21 @@ typedef struct CGPointError CGPointError;
 
 /** @property barWidth
  *	@brief Width of the lateral sections of the bars.
+ *	@ingroup plotAnimationRangePlot
  **/
 @synthesize barWidth;
 
 /** @property gapHeight
  *	@brief Height of the central gap.
  *  Set to zero to have no gap.
+ *	@ingroup plotAnimationRangePlot
  **/
 @synthesize gapHeight;
 
 /** @property gapWidth
  *	@brief Width of the central gap.
  *  Set to zero to have no gap.
+ *	@ingroup plotAnimationRangePlot
  **/
 @synthesize gapWidth;
 
@@ -131,6 +145,29 @@ typedef struct CGPointError CGPointError;
 	[barLineStyle release];
 	[areaFill release];
 	[super dealloc];
+}
+
+-(void)encodeWithCoder:(NSCoder *)coder
+{
+	[super encodeWithCoder:coder];
+	
+	[coder encodeObject:self.barLineStyle forKey:@"CPTRangePlot.barLineStyle"];
+	[coder encodeCGFloat:self.barWidth forKey:@"CPTRangePlot.barWidth"];
+	[coder encodeCGFloat:self.gapHeight forKey:@"CPTRangePlot.gapHeight"];
+	[coder encodeCGFloat:self.gapWidth forKey:@"CPTRangePlot.gapWidth"];
+	[coder encodeObject:self.areaFill forKey:@"CPTRangePlot.areaFill"];
+}
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+    if ( (self = [super initWithCoder:coder]) ) {
+		barLineStyle = [[coder decodeObjectForKey:@"CPTRangePlot.barLineStyle"] copy];
+		barWidth = [coder decodeCGFloatForKey:@"CPTRangePlot.barWidth"];
+		gapHeight = [coder decodeCGFloatForKey:@"CPTRangePlot.gapHeight"];
+		gapWidth = [coder decodeCGFloatForKey:@"CPTRangePlot.gapWidth"];
+		areaFill = [[coder decodeObjectForKey:@"CPTRangePlot.areaFill"] copy];
+	}
+    return self;
 }
 
 #pragma mark -
@@ -619,6 +656,29 @@ typedef struct CGPointError CGPointError;
 }
 
 #pragma mark -
+#pragma mark Animation
+
++(BOOL)needsDisplayForKey:(NSString *)aKey
+{
+	static NSArray *keys = nil;
+	
+	if ( !keys ) {
+		keys = [[NSArray alloc] initWithObjects:
+				@"barWidth",
+				@"gapHeight", 
+				@"gapWidth", 
+				nil];
+	}
+	
+	if ( [keys containsObject:aKey] ) {
+		return YES;
+	}
+	else {
+		return [super needsDisplayForKey:aKey];
+	}
+}
+
+#pragma mark -
 #pragma mark Fields
 
 -(NSUInteger)numberOfFields 
@@ -711,6 +771,30 @@ typedef struct CGPointError CGPointError;
         [self setNeedsDisplay];
 		[[NSNotificationCenter defaultCenter] postNotificationName:CPTLegendNeedsRedrawForPlotNotification object:self];
     }
+}
+
+-(void)setBarWidth:(CGFloat)newBarWidth
+{
+	if ( barWidth != newBarWidth ) {
+		barWidth = newBarWidth;
+		[self setNeedsDisplay];
+	}
+}
+
+-(void)setGapHeight:(CGFloat)newGapHeight
+{
+	if ( gapHeight != newGapHeight ) {
+		gapHeight = newGapHeight;
+		[self setNeedsDisplay];
+	}
+}
+
+-(void)setGapWidth:(CGFloat)newGapWidth
+{
+	if ( gapWidth != newGapWidth ) {
+		gapWidth = newGapWidth;
+		[self setNeedsDisplay];
+	}
 }
 
 -(void)setXValues:(NSArray *)newValues 

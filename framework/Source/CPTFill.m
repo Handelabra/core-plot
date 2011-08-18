@@ -103,8 +103,22 @@
 
 -(id)initWithCoder:(NSCoder *)coder
 {
-	// do nothing--implemented in subclasses
-	return nil;
+	id fill = [coder decodeObjectForKey:@"_CPTFillColor.fillColor"];
+	if ( fill ) {
+		return [self initWithColor:fill];
+	}
+	
+	fill = [coder decodeObjectForKey:@"_CPTFillGradient.fillGradient"];
+	if ( fill ) {
+		return [self initWithGradient:fill];
+	}
+	
+	fill = [coder decodeObjectForKey:@"_CPTFillImage.fillImage"];
+	if ( fill ) {
+		return [self initWithImage:fill];
+	}
+	
+	return self;
 }
 
 @end

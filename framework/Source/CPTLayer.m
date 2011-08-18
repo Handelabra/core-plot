@@ -1,15 +1,28 @@
 #import "CPTAxisSet.h"
 #import "CPTGraph.h"
 #import "CPTLayer.h"
-#import "CPTLayoutManager.h"
 #import "CPTPathExtensions.h"
+#import "CPTPlatformSpecificDefines.h"
 #import "CPTPlatformSpecificFunctions.h"
 #import "CPTExceptions.h"
 #import "CPTLineStyle.h"
+#import "CPTShadow.h"
 #import "CPTUtilities.h"
 #import "CorePlotProbes.h"
 #import <objc/runtime.h>
+#import "NSCoderExtensions.h"
 #import <tgmath.h>
+
+/**	@defgroup animation Animatable Properties
+ *	@brief Custom layer properties that can be animated using Core Animation.
+ *	@if MacOnly
+ *	@since Custom layer property animation is supported on MacOS 10.6 and later.
+ *	@endif
+ **/
+
+/**	@defgroup notification Notifications
+ *	@brief Notifications used by Core Plot.
+ **/
 
 /**	@cond */
 @interface CPTLayer()
@@ -63,6 +76,11 @@
  **/
 @synthesize masksToBorder;
 
+/** @property shadow 
+ *  @brief The shadow drawn under the layer content. If nil (the default), no shadow is drawn.
+ **/
+@synthesize shadow;
+
 /** @property outerBorderPath
  *  @brief A drawing path that encompasses the outer boundary of the layer border.
  **/
@@ -90,11 +108,6 @@
  **/
 @dynamic sublayerMaskingPath;
 
-/** @property layoutManager
- *  @brief The layout manager for this layer.
- **/
-@synthesize layoutManager;
-
 /** @property sublayersExcludedFromAutomaticLayout
  *  @brief A set of sublayers that should be excluded from the automatic sublayer layout.
  **/
@@ -118,7 +131,6 @@
  *	- needsDisplayOnBoundsChange = NO
  *	- opaque = NO
  *	- masksToBounds = NO
- *	- zPosition = defaultZPosition
  *	- padding = 0 on all four sides
  *	- Default animations for changes in position, bounds, and sublayers are turned off.
  *
@@ -133,7 +145,7 @@
 		paddingRight = 0.0;
 		paddingBottom = 0.0;
 		masksToBorder = NO;
-		layoutManager = nil;
+		shadow = nil;
 		renderingRecursively = NO;
 		useFastRendering = NO;
 		graph = nil;
@@ -144,7 +156,6 @@
 		self.needsDisplayOnBoundsChange = NO;
 		self.opaque = NO;
 		self.masksToBounds = NO;
-		self.zPosition = [self.class defaultZPosition];
         
         // Screen scaling
         if ( [self respondsToSelector:@selector(setContentsScale:)] ) {
@@ -173,7 +184,7 @@
 		paddingRight = theLayer->paddingRight;
 		paddingBottom = theLayer->paddingBottom;
 		masksToBorder = theLayer->masksToBorder;
-		layoutManager = [theLayer->layoutManager retain];
+		shadow = [theLayer->shadow retain];
 		renderingRecursively = theLayer->renderingRecursively;
 		graph = theLayer->graph;
 		outerBorderPath = CGPathRetain(theLayer->outerBorderPath);
@@ -185,7 +196,7 @@
 -(void)dealloc
 {
 	graph = nil;
-	[layoutManager release];
+	[shadow release];
 	CGPathRelease(outerBorderPath);
 	CGPathRelease(innerBorderPath);
 
@@ -199,6 +210,44 @@
 	[super finalize];
 }
 
+#pragma mark -
+#pragma mark NSCoding methods
+
+-(void)encodeWithCoder:(NSCoder *)coder
+{
+	[super encodeWithCoder:coder];
+	
+	[coder encodeCGFloat:self.paddingLeft forKey:@"CPTLayer.paddingLeft"];
+	[coder encodeCGFloat:self.paddingTop forKey:@"CPTLayer.paddingTop"];
+	[coder encodeCGFloat:self.paddingRight forKey:@"CPTLayer.paddingRight"];
+	[coder encodeCGFloat:self.paddingBottom forKey:@"CPTLayer.paddingBottom"];
+	[coder encodeBool:self.masksToBorder forKey:@"CPTLayer.masksToBorder"];
+	[coder encodeObject:self.shadow forKey:@"CPTLayer.shadow"];
+	[coder encodeConditionalObject:self.graph forKey:@"CPTLayer.graph"];
+
+	// No need to archive these properties:
+	// renderingRecursively
+	// outerBorderPath
+	// innerBorderPath
+}
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+    if ( (self = [super initWithCoder:coder]) ) {
+		paddingLeft = [coder decodeCGFloatForKey:@"CPTLayer.paddingLeft"];
+		paddingTop = [coder decodeCGFloatForKey:@"CPTLayer.paddingTop"];
+		paddingRight = [coder decodeCGFloatForKey:@"CPTLayer.paddingRight"];
+		paddingBottom = [coder decodeCGFloatForKey:@"CPTLayer.paddingBottom"];
+		masksToBorder = [coder decodeBoolForKey:@"CPTLayer.masksToBorder"];
+		shadow = [[coder decodeObjectForKey:@"CPTLayer.shadow"] copy];
+		graph = [coder decodeObjectForKey:@"CPTLayer.graph"];
+		
+		renderingRecursively = NO;
+		outerBorderPath = NULL;
+		innerBorderPath = NULL;
+	}
+    return self;
+}
 
 #pragma mark -
 #pragma mark Animation
@@ -230,6 +279,7 @@
 {
 	// This is where subclasses do their drawing
 	[self applyMaskToContext:context];
+	[self.shadow setShadowInContext:context];
 }
 
 /**	@brief Draws layer content and the content of all sublayers into the provided graphics context.
@@ -447,14 +497,6 @@
     }
 }
 
-/**	@brief The default z-position for the layer.
- *	@return The z-position.
- **/
-+(CGFloat)defaultZPosition 
-{
-	return 0.0;
-}
-
 -(void)layoutSublayers
 {
 	// This is where we do our custom replacement for the Mac-only layout manager and autoresizing mask
@@ -643,10 +685,19 @@
 -(void)setHidden:(BOOL)newHidden
 {
 	if ( newHidden != self.hidden ) {
-		self.hidden = newHidden;
+		[super setHidden:newHidden];
 		if ( !newHidden ) {
 			[self setNeedsDisplay];
 		}
+	}
+}
+
+-(void)setShadow:(CPTShadow *)newShadow
+{
+	if ( newShadow != shadow ) {
+		[shadow release];
+		shadow = [newShadow copy];
+		[self setNeedsDisplay];
 	}
 }
 

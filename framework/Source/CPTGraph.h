@@ -10,13 +10,18 @@
 @class CPTPlotAreaFrame;
 @class CPTPlotSpace;
 @class CPTTheme;
-@class CPTMutableTextStyle;
+@class CPTTextStyle;
 @class CPTLayerAnnotation;
 
-/**
- *  @brief Graph notifications
- **/ 
+/// @name Graph
+/// @{
+
+/**	@brief Notification sent by various objects to tell the graph it should redraw itself.
+ *	@ingroup notification
+ **/
 extern NSString * const CPTGraphNeedsRedrawNotification;
+
+///	@}
 
 /**
  *	@brief Enumeration of graph layers.
@@ -38,7 +43,7 @@ typedef enum _CPTGraphLayerType {
     NSMutableArray *plots;
     NSMutableArray *plotSpaces;
     NSString *title;
-    CPTMutableTextStyle *titleTextStyle;
+    CPTTextStyle *titleTextStyle;
     CPTRectAnchor titlePlotAreaFrameAnchor;
     CGPoint titleDisplacement;
     CPTLayerAnnotation *titleAnnotation;
@@ -46,13 +51,12 @@ typedef enum _CPTGraphLayerType {
 	CPTLayerAnnotation *legendAnnotation;
 	CPTRectAnchor legendAnchor;
 	CGPoint legendDisplacement;
-
 }
 
 /// @name Title
 /// @{
 @property (nonatomic, readwrite, copy) NSString *title;
-@property (nonatomic, readwrite, copy) CPTMutableTextStyle *titleTextStyle;
+@property (nonatomic, readwrite, copy) CPTTextStyle *titleTextStyle;
 @property (nonatomic, readwrite, assign) CGPoint titleDisplacement;
 @property (nonatomic, readwrite, assign) CPTRectAnchor titlePlotAreaFrameAnchor;
 ///	@}

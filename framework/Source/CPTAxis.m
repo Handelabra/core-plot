@@ -11,15 +11,26 @@
 #import "CPTGridLines.h"
 #import "CPTImage.h"
 #import "CPTLimitBand.h"
+#import "CPTLineCap.h"
 #import "CPTLineStyle.h"
 #import "CPTPlotRange.h"
 #import "CPTPlotSpace.h"
 #import "CPTPlotArea.h"
 #import "CPTTextLayer.h"
 #import "CPTUtilities.h"
+#import "CPTShadow.h"
 #import "CPTPlatformSpecificCategories.h"
 #import "CPTUtilities.h"
+#import "NSCoderExtensions.h"
 #import "NSDecimalNumberExtensions.h"
+
+/**	@defgroup axisAnimation Axes
+ *	@brief Axis properties that can be animated using Core Animation.
+ *	@if MacOnly
+ *	@since Custom layer property animation is supported on MacOS 10.6 and later.
+ *	@endif
+ *	@ingroup animation
+ **/
 
 /**	@cond */
 @interface CPTAxis ()
@@ -92,6 +103,18 @@ double niceNum(double x, BOOL round);
  **/
 @synthesize gridLinesRange;
 
+/**	@property axisLineCapMin
+ *	@brief The line cap for the end of the axis line with the minimum value.
+ *	@see axisLineCapMax
+ **/
+@synthesize axisLineCapMin;
+
+/**	@property axisLineCapMax
+ *	@brief The line cap for the end of the axis line with the maximum value.
+ *	@see axisLineCapMin
+ **/
+@synthesize axisLineCapMax;
+
 
 // Title
 
@@ -108,6 +131,7 @@ double niceNum(double x, BOOL round);
 
 /**	@property titleOffset
  *	@brief The offset distance between the axis title and the axis line.
+ *	@ingroup axisAnimation
  **/
 @synthesize titleOffset;
 
@@ -119,6 +143,7 @@ double niceNum(double x, BOOL round);
 /**	@property titleRotation
  *	@brief The rotation angle of the axis title in radians.
  *  If NaN (the default), the title will be parallel to the axis.
+ *	@ingroup axisAnimation
  **/
 @synthesize titleRotation;
 
@@ -150,6 +175,7 @@ double niceNum(double x, BOOL round);
 
 /**	@property labelOffset
  *	@brief The offset distance between the tick marks and labels.
+ *	@ingroup axisAnimation
  **/
 @synthesize labelOffset;
 
@@ -157,18 +183,21 @@ double niceNum(double x, BOOL round);
 
 /**	@property minorTickLabelOffset
  *	@brief The offset distance between the minor tick marks and labels.
+ *	@ingroup axisAnimation
  **/
 @synthesize minorTickLabelOffset;
 
 /**	@property labelRotation
  *	@brief The rotation of the axis labels in radians.
  *  Set this property to M_PI/2.0 to have labels read up the screen, for example.
+ *	@ingroup axisAnimation
  **/
 @synthesize labelRotation;
 
 /**	@property minorTickLabelRotation
  *	@brief The rotation of the axis minor tick labels in radians.
  *  Set this property to M_PI/2.0 to have labels read up the screen, for example.
+ *	@ingroup axisAnimation
  **/
 @synthesize minorTickLabelRotation;
 
@@ -231,6 +260,11 @@ double niceNum(double x, BOOL round);
  *	@brief An array of CPTPlotRange objects. Any tick marks and labels falling inside any of the ranges in the array will not be drawn.
  **/
 @synthesize labelExclusionRanges;
+
+/**	@property labelShadow
+ *	@brief The shadow applied to each axis label.
+ **/
+@synthesize labelShadow;
 
 // Major ticks
 
@@ -375,6 +409,8 @@ double niceNum(double x, BOOL round);
 		minorTickLineStyle = [[CPTLineStyle alloc] init];
 		majorGridLineStyle = nil;
 		minorGridLineStyle = nil;
+		axisLineCapMin = nil;
+		axisLineCapMax = nil;
 		labelingOrigin = [[NSDecimalNumber zero] decimalValue];
 		majorIntervalLength = [[NSDecimalNumber one] decimalValue];
 		minorTicksPerInterval = 1;
@@ -400,6 +436,7 @@ double niceNum(double x, BOOL round);
 		labelExclusionRanges = nil;
 		plotArea = nil;
 		separateLayers = NO;
+		labelShadow = nil;
 		alternatingBandFills = nil;
 		mutableBackgroundLimitBands = nil;
 		minorGridLines = nil;
@@ -435,6 +472,8 @@ double niceNum(double x, BOOL round);
 		minorTickLineStyle = [theLayer->minorTickLineStyle retain];
 		majorGridLineStyle = [theLayer->majorGridLineStyle retain];
 		minorGridLineStyle = [theLayer->minorGridLineStyle retain];
+		axisLineCapMin = [theLayer->axisLineCapMin retain];
+		axisLineCapMax = [theLayer->axisLineCapMax retain];
 		labelingOrigin = theLayer->labelingOrigin;
 		majorIntervalLength = theLayer->majorIntervalLength;
 		minorTicksPerInterval = theLayer->minorTicksPerInterval;
@@ -455,6 +494,7 @@ double niceNum(double x, BOOL round);
 		labelExclusionRanges = [theLayer->labelExclusionRanges retain];
 		plotArea = theLayer->plotArea;
 		separateLayers = theLayer->separateLayers;
+		labelShadow = [theLayer->labelShadow retain];
 		visibleRange = [theLayer->visibleRange retain];
 		gridLinesRange = [theLayer->gridLinesRange retain];
 		alternatingBandFills = [theLayer->alternatingBandFills retain];
@@ -485,6 +525,8 @@ double niceNum(double x, BOOL round);
 	[minorTickLineStyle release];
     [majorGridLineStyle release];
     [minorGridLineStyle release];
+	[axisLineCapMin release];
+	[axisLineCapMax release];
 	[labelFormatter release];
 	[minorTickLabelFormatter release];
 	[axisLabels release];
@@ -498,8 +540,149 @@ double niceNum(double x, BOOL round);
     [gridLinesRange release];
 	[alternatingBandFills release];
 	[mutableBackgroundLimitBands release];
+	[labelShadow release];
 	
 	[super dealloc];
+}
+
+#pragma mark -
+#pragma mark NSCoding methods
+
+-(void)encodeWithCoder:(NSCoder *)coder
+{
+	[super encodeWithCoder:coder];
+	
+	[coder encodeInteger:self.coordinate forKey:@"CPTAxis.coordinate"];
+	[coder encodeObject:self.plotSpace forKey:@"CPTAxis.plotSpace"];
+	[coder encodeObject:self.majorTickLocations forKey:@"CPTAxis.majorTickLocations"];
+	[coder encodeObject:self.minorTickLocations forKey:@"CPTAxis.minorTickLocations"];
+	[coder encodeCGFloat:self.majorTickLength forKey:@"CPTAxis.majorTickLength"];
+	[coder encodeCGFloat:self.minorTickLength forKey:@"CPTAxis.minorTickLength"];
+	[coder encodeCGFloat:self.labelOffset forKey:@"CPTAxis.labelOffset"];
+	[coder encodeCGFloat:self.minorTickLabelOffset forKey:@"CPTAxis.minorTickLabelOffset"];
+	[coder encodeCGFloat:self.labelRotation forKey:@"CPTAxis.labelRotation"];
+	[coder encodeCGFloat:self.minorTickLabelRotation forKey:@"CPTAxis.minorTickLabelRotation"];
+	[coder encodeInteger:self.labelAlignment forKey:@"CPTAxis.labelAlignment"];
+	[coder encodeInteger:self.minorTickLabelAlignment forKey:@"CPTAxis.minorTickLabelAlignment"];
+	[coder encodeObject:self.axisLineStyle forKey:@"CPTAxis.axisLineStyle"];
+	[coder encodeObject:self.majorTickLineStyle forKey:@"CPTAxis.majorTickLineStyle"];
+	[coder encodeObject:self.minorTickLineStyle forKey:@"CPTAxis.minorTickLineStyle"];
+	[coder encodeObject:self.majorGridLineStyle forKey:@"CPTAxis.majorGridLineStyle"];
+	[coder encodeObject:self.minorGridLineStyle forKey:@"CPTAxis.minorGridLineStyle"];
+	[coder encodeObject:self.axisLineCapMin forKey:@"CPTAxis.axisLineCapMin"];
+	[coder encodeObject:self.axisLineCapMax forKey:@"CPTAxis.axisLineCapMax"];
+	[coder encodeDecimal:self.labelingOrigin forKey:@"CPTAxis.labelingOrigin"];
+	[coder encodeDecimal:self.majorIntervalLength forKey:@"CPTAxis.majorIntervalLength"];
+	[coder encodeInteger:self.minorTicksPerInterval forKey:@"CPTAxis.minorTicksPerInterval"];
+	[coder encodeInteger:self.preferredNumberOfMajorTicks forKey:@"CPTAxis.preferredNumberOfMajorTicks"];
+	[coder encodeInteger:self.labelingPolicy forKey:@"CPTAxis.labelingPolicy"];
+	[coder encodeObject:self.labelTextStyle forKey:@"CPTAxis.labelTextStyle"];
+	[coder encodeObject:self.minorTickLabelTextStyle forKey:@"CPTAxis.minorTickLabelTextStyle"];
+	[coder encodeObject:self.titleTextStyle forKey:@"CPTAxis.titleTextStyle"];
+	[coder encodeObject:self.labelFormatter forKey:@"CPTAxis.labelFormatter"];
+	[coder encodeObject:self.minorTickLabelFormatter forKey:@"CPTAxis.minorTickLabelFormatter"];
+	[coder encodeBool:self.labelFormatterChanged forKey:@"CPTAxis.labelFormatterChanged"];
+	[coder encodeObject:self.axisLabels forKey:@"CPTAxis.axisLabels"];
+	[coder encodeObject:self.minorTickAxisLabels forKey:@"CPTAxis.minorTickAxisLabels"];
+	[coder encodeObject:self.axisTitle forKey:@"CPTAxis.axisTitle"];
+	[coder encodeObject:self.title forKey:@"CPTAxis.title"];
+	[coder encodeCGFloat:self.titleOffset forKey:@"CPTAxis.titleOffset"];
+	[coder encodeCGFloat:self.titleRotation forKey:@"CPTAxis.titleRotation"];
+	[coder encodeDecimal:self.titleLocation forKey:@"CPTAxis.titleLocation"];
+	[coder encodeInteger:self.tickDirection forKey:@"CPTAxis.tickDirection"];
+	[coder encodeBool:self.needsRelabel forKey:@"CPTAxis.needsRelabel"];
+	[coder encodeObject:self.labelExclusionRanges forKey:@"CPTAxis.labelExclusionRanges"];
+	[coder encodeObject:self.visibleRange forKey:@"CPTAxis.visibleRange"];
+	[coder encodeObject:self.gridLinesRange forKey:@"CPTAxis.gridLinesRange"];
+	[coder encodeObject:self.alternatingBandFills forKey:@"CPTAxis.alternatingBandFills"];
+	[coder encodeObject:self.mutableBackgroundLimitBands forKey:@"CPTAxis.mutableBackgroundLimitBands"];
+	[coder encodeBool:self.separateLayers forKey:@"CPTAxis.separateLayers"];
+	[coder encodeObject:self.labelShadow forKey:@"CPTAxis.labelShadow"];
+	[coder encodeConditionalObject:self.plotArea forKey:@"CPTAxis.plotArea"];
+	[coder encodeConditionalObject:self.minorGridLines forKey:@"CPTAxis.minorGridLines"];
+	[coder encodeConditionalObject:self.majorGridLines forKey:@"CPTAxis.majorGridLines"];
+}
+
+-(id)initWithCoder:(NSCoder *)coder
+{
+    if ( (self = [super initWithCoder:coder]) ) {
+		coordinate = [coder decodeIntegerForKey:@"CPTAxis.coordinate"];
+		plotSpace = [[coder decodeObjectForKey:@"CPTAxis.plotSpace"] retain];
+		majorTickLocations = [[coder decodeObjectForKey:@"CPTAxis.majorTickLocations"] retain];
+		minorTickLocations = [[coder decodeObjectForKey:@"CPTAxis.minorTickLocations"] retain];
+		majorTickLength = [coder decodeCGFloatForKey:@"CPTAxis.majorTickLength"];
+		minorTickLength = [coder decodeCGFloatForKey:@"CPTAxis.minorTickLength"];
+		labelOffset = [coder decodeCGFloatForKey:@"CPTAxis.labelOffset"];
+		minorTickLabelOffset = [coder decodeCGFloatForKey:@"CPTAxis.minorTickLabelOffset"];
+		labelRotation = [coder decodeCGFloatForKey:@"CPTAxis.labelRotation"];
+		minorTickLabelRotation = [coder decodeCGFloatForKey:@"CPTAxis.minorTickLabelRotation"];
+		labelAlignment = [coder decodeIntegerForKey:@"CPTAxis.labelAlignment"];
+		minorTickLabelAlignment = [coder decodeIntegerForKey:@"CPTAxis.minorTickLabelAlignment"];
+		axisLineStyle = [[coder decodeObjectForKey:@"CPTAxis.axisLineStyle"] copy];
+		majorTickLineStyle = [[coder decodeObjectForKey:@"CPTAxis.majorTickLineStyle"] copy];
+		minorTickLineStyle = [[coder decodeObjectForKey:@"CPTAxis.minorTickLineStyle"] copy];
+		majorGridLineStyle = [[coder decodeObjectForKey:@"CPTAxis.majorGridLineStyle"] copy];
+		minorGridLineStyle = [[coder decodeObjectForKey:@"CPTAxis.minorGridLineStyle"] copy];
+		axisLineCapMin = [[coder decodeObjectForKey:@"CPTAxis.axisLineCapMin"] copy];
+		axisLineCapMax = [[coder decodeObjectForKey:@"CPTAxis.axisLineCapMax"] copy];
+		labelingOrigin = [coder decodeDecimalForKey:@"CPTAxis.labelingOrigin"];
+		majorIntervalLength = [coder decodeDecimalForKey:@"CPTAxis.majorIntervalLength"];
+		minorTicksPerInterval = [coder decodeIntegerForKey:@"CPTAxis.minorTicksPerInterval"];
+		preferredNumberOfMajorTicks = [coder decodeIntegerForKey:@"CPTAxis.preferredNumberOfMajorTicks"];
+		labelingPolicy = [coder decodeIntegerForKey:@"CPTAxis.labelingPolicy"];
+		labelTextStyle = [[coder decodeObjectForKey:@"CPTAxis.labelTextStyle"] copy];
+		minorTickLabelTextStyle = [[coder decodeObjectForKey:@"CPTAxis.minorTickLabelTextStyle"] copy];
+		titleTextStyle = [[coder decodeObjectForKey:@"CPTAxis.titleTextStyle"] copy];
+		labelFormatter = [[coder decodeObjectForKey:@"CPTAxis.labelFormatter"] retain];
+		minorTickLabelFormatter = [[coder decodeObjectForKey:@"CPTAxis.minorTickLabelFormatter"] retain];
+		labelFormatterChanged = [coder decodeBoolForKey:@"CPTAxis.labelFormatterChanged"];
+		axisLabels = [[coder decodeObjectForKey:@"CPTAxis.axisLabels"] retain];
+		minorTickAxisLabels = [[coder decodeObjectForKey:@"CPTAxis.minorTickAxisLabels"] retain];
+		axisTitle = [[coder decodeObjectForKey:@"CPTAxis.axisTitle"] retain];
+		title = [[coder decodeObjectForKey:@"CPTAxis.title"] copy];
+		titleOffset = [coder decodeCGFloatForKey:@"CPTAxis.titleOffset"];
+		titleRotation = [coder decodeCGFloatForKey:@"CPTAxis.titleRotation"];
+		titleLocation = [coder decodeDecimalForKey:@"CPTAxis.titleLocation"];
+		tickDirection = [coder decodeIntegerForKey:@"CPTAxis.tickDirection"];
+		needsRelabel = [coder decodeBoolForKey:@"CPTAxis.needsRelabel"];
+		labelExclusionRanges = [[coder decodeObjectForKey:@"CPTAxis.labelExclusionRanges"] retain];
+		visibleRange = [[coder decodeObjectForKey:@"CPTAxis.visibleRange"] copy];
+		gridLinesRange = [[coder decodeObjectForKey:@"CPTAxis.gridLinesRange"] copy];
+		alternatingBandFills = [[coder decodeObjectForKey:@"CPTAxis.alternatingBandFills"] copy];
+		mutableBackgroundLimitBands = [[coder decodeObjectForKey:@"CPTAxis.mutableBackgroundLimitBands"] mutableCopy];
+		separateLayers = [coder decodeBoolForKey:@"CPTAxis.separateLayers"];
+		labelShadow = [[coder decodeObjectForKey:@"CPTAxis.labelShadow"] retain];
+		plotArea = [coder decodeObjectForKey:@"CPTAxis.plotArea"];
+		minorGridLines = [coder decodeObjectForKey:@"CPTAxis.minorGridLines"];
+		majorGridLines = [coder decodeObjectForKey:@"CPTAxis.majorGridLines"];
+	}
+    return self;
+}
+
+#pragma mark -
+#pragma mark Animation
+
++(BOOL)needsDisplayForKey:(NSString *)aKey
+{
+	static NSArray *keys = nil;
+	
+	if ( !keys ) {
+		keys = [[NSArray alloc] initWithObjects:
+				@"titleOffset",
+				@"titleRotation",
+				@"labelOffset",
+				@"minorTickLabelOffset",
+				@"labelRotation", 
+				@"minorTickLabelRotation", 
+				nil];
+	}
+	
+	if ( [keys containsObject:aKey] ) {
+		return YES;
+	}
+	else {
+		return [super needsDisplayForKey:aKey];
+	}
 }
 
 #pragma mark -
@@ -933,12 +1116,13 @@ double niceNum(double x, BOOL round)
     NSMutableSet *newAxisLabels = [[NSMutableSet alloc] initWithCapacity:locations.count];
 	CPTAxisLabel *blankLabel = [[CPTAxisLabel alloc] initWithText:nil textStyle:nil];
 	CPTAxisLabelGroup *axisLabelGroup = self.plotArea.axisLabelGroup;
-	CALayer *lastLayer = nil;
+	CPTLayer *lastLayer = nil;
 	CPTPlotArea *thePlotArea = self.plotArea;
 	
 	BOOL theLabelFormatterChanged = self.labelFormatterChanged;
 	CPTSign theTickDirection = self.tickDirection;
 	CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
+	CPTShadow *theShadow = self.labelShadow;
 	
 	for ( NSDecimalNumber *tickLocation in locations ) {
 		CPTAxisLabel *newAxisLabel;
@@ -985,6 +1169,7 @@ double niceNum(double x, BOOL round)
 		}
 
 		lastLayer = newAxisLabel.contentLayer;
+		lastLayer.shadow = theShadow;
 		
 		[newAxisLabels addObject:newAxisLabel];
 		[newAxisLabel release];
@@ -1059,20 +1244,63 @@ double niceNum(double x, BOOL round)
 			self.minorTickLocations = [self filteredMinorTickLocations:newMinorLocations];
 	}
 	
-    if ( self.labelingPolicy != CPTAxisLabelingPolicyNone ) {
-        // Label ticks
-		[self updateAxisLabelsAtLocations:self.majorTickLocations useMajorAxisLabels:YES labelAlignment:self.labelAlignment labelOffset: self.labelOffset labelRotation:self.labelRotation textStyle:self.labelTextStyle labelFormatter:self.labelFormatter];
-		if (self.minorTickLabelFormatter) {
-			[self updateAxisLabelsAtLocations:self.minorTickLocations useMajorAxisLabels:NO labelAlignment:self.minorTickLabelAlignment labelOffset: self.minorTickLabelOffset labelRotation:self.minorTickLabelRotation textStyle:self.minorTickLabelTextStyle labelFormatter:self.minorTickLabelFormatter];
+	// Label ticks
+	if ( self.labelingPolicy != CPTAxisLabelingPolicyNone ) {
+		NSNumberFormatter *theFormatter = self.labelFormatter;
+		if ( theFormatter ) {
+			[self updateAxisLabelsAtLocations:self.majorTickLocations
+						   useMajorAxisLabels:YES
+							   labelAlignment:self.labelAlignment
+								  labelOffset:self.labelOffset
+								labelRotation:self.labelRotation
+									textStyle:self.labelTextStyle
+							   labelFormatter:theFormatter];
 		}
-    }
 
+		theFormatter = self.minorTickLabelFormatter;
+		if ( theFormatter ) {
+			[self updateAxisLabelsAtLocations:self.minorTickLocations
+						   useMajorAxisLabels:NO
+							   labelAlignment:self.minorTickLabelAlignment
+								  labelOffset:self.minorTickLabelOffset
+								labelRotation:self.minorTickLabelRotation
+									textStyle:self.minorTickLabelTextStyle
+							   labelFormatter:theFormatter];
+		}
+	}
+	
     self.needsRelabel = NO;
 	if ( self.alternatingBandFills.count > 0 ) {
 		[self.plotArea setNeedsDisplay];
 	}
 	
 	[self.delegate axisDidRelabel:self];
+}
+
+/**	@brief Update the major tick mark labels.
+ **/
+-(void)updateMajorTickLabels
+{
+	CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
+	CPTSign direction = self.tickDirection;
+	
+    for ( CPTAxisLabel *label in self.axisLabels ) {
+        CGPoint tickBasePoint = [self viewPointForCoordinateDecimalNumber:label.tickLocation];
+        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
+    }
+}
+
+/**	@brief Update the minor tick mark labels.
+ **/
+-(void)updateMinorTickLabels
+{
+	CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
+	CPTSign direction = self.tickDirection;
+	
+    for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
+        CGPoint tickBasePoint = [self viewPointForCoordinateDecimalNumber:label.tickLocation];
+        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
+    }
 }
 
 #pragma mark -
@@ -1086,26 +1314,14 @@ double niceNum(double x, BOOL round)
 #pragma mark -
 #pragma mark Layout
 
-+(CGFloat)defaultZPosition 
-{
-	return CPTDefaultZPositionAxis;
-}
-
 -(void)layoutSublayers
 {
-	CPTCoordinate orthogonalCoordinate = CPTOrthogonalCoordinate(self.coordinate);
-	CPTSign direction = self.tickDirection;
+	[self updateMajorTickLabels];
+	[self updateMinorTickLabels];
 	
-    for ( CPTAxisLabel *label in self.axisLabels ) {
-        CGPoint tickBasePoint = [self viewPointForCoordinateDecimalNumber:label.tickLocation];
-        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
-    }
-    for ( CPTAxisLabel *label in self.minorTickAxisLabels ) {
-        CGPoint tickBasePoint = [self viewPointForCoordinateDecimalNumber:label.tickLocation];
-        [label positionRelativeToViewPoint:tickBasePoint forCoordinate:orthogonalCoordinate inDirection:direction];
-    }
-	
-	[self.axisTitle positionRelativeToViewPoint:[self viewPointForCoordinateDecimalNumber:self.titleLocation] forCoordinate:orthogonalCoordinate inDirection:direction];
+	[self.axisTitle positionRelativeToViewPoint:[self viewPointForCoordinateDecimalNumber:self.titleLocation]
+								  forCoordinate:CPTOrthogonalCoordinate(self.coordinate)
+									inDirection:self.tickDirection];
 }
 
 #pragma mark -
@@ -1287,7 +1503,9 @@ double niceNum(double x, BOOL round)
     if ( newOffset != titleOffset ) {
         titleOffset = newOffset;
 		self.axisTitle.offset = titleOffset;
-		[self setNeedsLayout];
+		[self.axisTitle positionRelativeToViewPoint:[self viewPointForCoordinateDecimalNumber:self.titleLocation]
+									  forCoordinate:CPTOrthogonalCoordinate(self.coordinate)
+										inDirection:self.tickDirection];
     }
 }
 
@@ -1296,7 +1514,9 @@ double niceNum(double x, BOOL round)
     if ( newRotation != titleRotation ) {
         titleRotation = newRotation;
 		self.axisTitle.rotation = titleRotation;
-		[self setNeedsLayout];
+		[self.axisTitle positionRelativeToViewPoint:[self viewPointForCoordinateDecimalNumber:self.titleLocation]
+									  forCoordinate:CPTOrthogonalCoordinate(self.coordinate)
+										inDirection:self.tickDirection];
     }
 }
 
@@ -1358,7 +1578,6 @@ double niceNum(double x, BOOL round)
     if ( newLocations != majorTickLocations ) {
         [majorTickLocations release];
         majorTickLocations = [newLocations retain];
-		[self setNeedsDisplay];
 		if ( self.separateLayers ) {
 			[self.majorGridLines setNeedsDisplay];
 		}
@@ -1375,7 +1594,6 @@ double niceNum(double x, BOOL round)
     if ( newLocations != majorTickLocations ) {
         [minorTickLocations release];
         minorTickLocations = [newLocations retain];
-		[self setNeedsDisplay];
 		if ( self.separateLayers ) {
 			[self.minorGridLines setNeedsDisplay];
 		}
@@ -1391,7 +1609,6 @@ double niceNum(double x, BOOL round)
 {
     if ( newLength != majorTickLength ) {
         majorTickLength = newLength;
-        [self setNeedsDisplay];
         self.needsRelabel = YES;
     }
 }
@@ -1400,7 +1617,7 @@ double niceNum(double x, BOOL round)
 {
     if ( newLength != minorTickLength ) {
         minorTickLength = newLength;
-        [self setNeedsDisplay];
+        self.needsRelabel = YES;
     }
 }
 
@@ -1408,8 +1625,7 @@ double niceNum(double x, BOOL round)
 {
     if ( newOffset != labelOffset ) {
         labelOffset = newOffset;
-		[self setNeedsLayout];
-        self.needsRelabel = YES;
+        [self updateMajorTickLabels];
     }
 }
 
@@ -1417,8 +1633,7 @@ double niceNum(double x, BOOL round)
 {
     if ( newOffset != minorTickLabelOffset ) {
         minorTickLabelOffset = newOffset;
-		[self setNeedsLayout];
-        self.needsRelabel = YES;
+        [self updateMinorTickLabels];
     }
 }
 
@@ -1426,8 +1641,7 @@ double niceNum(double x, BOOL round)
 {
     if ( newRotation != labelRotation ) {
         labelRotation = newRotation;
-		[self setNeedsLayout];
-        self.needsRelabel = YES;
+        [self updateMajorTickLabels];
     }
 }
 
@@ -1435,8 +1649,7 @@ double niceNum(double x, BOOL round)
 {
     if ( newRotation != minorTickLabelRotation ) {
         minorTickLabelRotation = newRotation;
-		[self setNeedsLayout];
-        self.needsRelabel = YES;
+        [self updateMinorTickLabels];
     }
 }
 
@@ -1444,7 +1657,6 @@ double niceNum(double x, BOOL round)
 {
     if ( newAlignment != labelAlignment ) {
         labelAlignment = newAlignment;
-		[self setNeedsLayout];
         self.needsRelabel = YES;
     }
 }
@@ -1453,9 +1665,19 @@ double niceNum(double x, BOOL round)
 {
     if ( newAlignment != minorTickLabelAlignment ) {
         minorTickLabelAlignment = newAlignment;
-		[self setNeedsLayout];
         self.needsRelabel = YES;
     }
+}
+
+-(void)setLabelShadow:(CPTShadow *)newLabelShadow
+{
+	if ( newLabelShadow != labelShadow ) {
+		[labelShadow release];
+		labelShadow = [newLabelShadow retain];
+		for ( CPTAxisLabel *label in self.axisLabels ) {
+			label.contentLayer.shadow = labelShadow;
+		}
+	}
 }
 
 -(void)setPlotSpace:(CPTPlotSpace *)newSpace 
@@ -1560,6 +1782,24 @@ double niceNum(double x, BOOL round)
     }
 }
 
+-(void)setAxisLineCapMin:(CPTLineCap *)newAxisLineCapMin
+{
+	if ( newAxisLineCapMin != axisLineCapMin ) {
+		[axisLineCapMin release];
+		axisLineCapMin = [newAxisLineCapMin copy];
+		[self setNeedsDisplay];
+	}
+}
+
+-(void)setAxisLineCapMax:(CPTLineCap *)newAxisLineCapMax
+{
+	if ( newAxisLineCapMax != axisLineCapMax ) {
+		[axisLineCapMax release];
+		axisLineCapMax = [newAxisLineCapMax copy];
+		[self setNeedsDisplay];
+	}
+}
+
 -(void)setLabelingOrigin:(NSDecimal)newLabelingOrigin
 {
 	if ( CPTDecimalEquals(labelingOrigin, newLabelingOrigin) ) {
@@ -1635,7 +1875,6 @@ double niceNum(double x, BOOL round)
 {
     if ( newDirection != tickDirection ) {
         tickDirection = newDirection;
-		[self setNeedsLayout];
         self.needsRelabel = YES;
     }
 }

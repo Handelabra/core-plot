@@ -10,10 +10,12 @@
 @class CPTAxisTitle;
 @class CPTGridLines;
 @class CPTLimitBand;
+@class CPTLineCap;
 @class CPTLineStyle;
 @class CPTPlotSpace;
 @class CPTPlotRange;
 @class CPTPlotArea;
+@class CPTShadow;
 
 /**	@brief Enumeration of labeling policies
  **/
@@ -82,6 +84,8 @@ typedef enum _CPTAxisLabelingPolicy {
     CPTLineStyle *minorTickLineStyle;
     CPTLineStyle *majorGridLineStyle;
     CPTLineStyle *minorGridLineStyle;
+	CPTLineCap *axisLineCapMin;
+	CPTLineCap *axisLineCapMax;
     NSDecimal labelingOrigin;			
     NSDecimal majorIntervalLength;	
     NSUInteger minorTicksPerInterval;
@@ -108,6 +112,7 @@ typedef enum _CPTAxisLabelingPolicy {
 	NSArray *alternatingBandFills;
 	NSMutableArray *mutableBackgroundLimitBands;
 	BOOL separateLayers;
+	CPTShadow *labelShadow;
 	__weak CPTPlotArea *plotArea;
 	__weak CPTGridLines *minorGridLines;
 	__weak CPTGridLines *majorGridLines;
@@ -120,6 +125,8 @@ typedef enum _CPTAxisLabelingPolicy {
 @property (nonatomic, readwrite, assign) NSDecimal labelingOrigin;
 @property (nonatomic, readwrite, assign) CPTSign tickDirection;
 @property (nonatomic, readwrite, copy) CPTPlotRange *visibleRange;
+@property (nonatomic, readwrite, copy) CPTLineCap *axisLineCapMin;
+@property (nonatomic, readwrite, copy) CPTLineCap *axisLineCapMax;
 ///	@}
 
 /// @name Title
@@ -155,6 +162,7 @@ typedef enum _CPTAxisLabelingPolicy {
 @property (nonatomic, readwrite, assign) CGFloat labelValueOffset; 
 @property (nonatomic, readwrite, assign) CGFloat labelValueFactor;
 
+@property (nonatomic, readwrite, retain) CPTShadow *labelShadow;
 ///	@}
 
 /// @name Major Ticks
@@ -205,6 +213,8 @@ typedef enum _CPTAxisLabelingPolicy {
 /// @{
 -(void)relabel;
 -(void)setNeedsRelabel;
+-(void)updateMajorTickLabels;
+-(void)updateMinorTickLabels;
 ///	@}
 
 /// @name Ticks
