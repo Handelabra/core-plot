@@ -1122,6 +1122,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "CorePlot-CocoaTouch";
+				SKIP_INSTALL = YES;
 				SYMROOT = "$(PROJECT_DIR)/../build";
 				ZERO_LINK = NO;
 			};
@@ -1166,6 +1167,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "CorePlot-CocoaTouch";
+				SKIP_INSTALL = YES;
 				SYMROOT = "$(PROJECT_DIR)/../build";
 			};
 			name = Debug;
@@ -1187,6 +1189,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "CorePlot-CocoaTouch";
+				SKIP_INSTALL = YES;
 				SYMROOT = "$(PROJECT_DIR)/../build";
 				ZERO_LINK = NO;
 			};
