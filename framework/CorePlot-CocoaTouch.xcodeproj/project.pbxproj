@@ -1109,6 +1109,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(VALID_ARCHS)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_SYMBOL_SEPARATION = YES;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
@@ -1152,6 +1153,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(VALID_ARCHS)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1176,6 +1178,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(VALID_ARCHS)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_SYMBOL_SEPARATION = YES;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
