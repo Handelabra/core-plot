@@ -1067,6 +1067,88 @@
 			};
 			name = Cupcakes;
 		};
+		343EE71814955336005C843A /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				COPY_PHASE_STRIP = YES;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
+				MACH_O_TYPE = staticlib;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-falign-loops=16";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				SDKROOT = iphoneos;
+				SEPARATE_STRIP = YES;
+				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_STYLE = debugging;
+				SYMROOT = "$(PROJECT_DIR)/../build";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = TestFlight;
+		};
+		343EE71914955336005C843A /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(VALID_ARCHS)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_SYMBOL_SEPARATION = YES;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				OTHER_CFLAGS = (
+					"-lstdc++",
+					"-falign-loops=16",
+				);
+				OTHER_CPTLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PRODUCT_NAME = "CorePlot-CocoaTouch";
+				SKIP_INSTALL = YES;
+				SYMROOT = "$(PROJECT_DIR)/../build";
+				ZERO_LINK = NO;
+			};
+			name = TestFlight;
+		};
+		343EE71A14955336005C843A /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DOXYGEN_PATH = /Applications/Doxygen.app/Contents/Resources/doxygen;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				PRODUCT_NAME = Documentation;
+				ZERO_LINK = NO;
+			};
+			name = TestFlight;
+		};
+		343EE71B14955336005C843A /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				PRODUCT_NAME = UniversalLibrary;
+			};
+			name = TestFlight;
+		};
 		34CFBD51143E3C0800D1E10B /* Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1306,6 +1388,7 @@
 				0799D97B137318CF0026072C /* Debug */,
 				0799D97C137318CF0026072C /* Cupcakes */,
 				34CFBD54143E3C0800D1E10B /* Distribution */,
+				343EE71B14955336005C843A /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Cupcakes;
@@ -1316,6 +1399,7 @@
 				BC9B83480FB8A0A50035D8DA /* Debug */,
 				BC9B83490FB8A0A50035D8DA /* Cupcakes */,
 				34CFBD52143E3C0800D1E10B /* Distribution */,
+				343EE71914955336005C843A /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Cupcakes;
@@ -1326,6 +1410,7 @@
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Cupcakes */,
 				34CFBD51143E3C0800D1E10B /* Distribution */,
+				343EE71814955336005C843A /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Cupcakes;
@@ -1336,6 +1421,7 @@
 				C3566B8110EED04A00FB3866 /* Debug */,
 				C3566B8210EED04A00FB3866 /* Cupcakes */,
 				34CFBD53143E3C0800D1E10B /* Distribution */,
+				343EE71A14955336005C843A /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Cupcakes;
