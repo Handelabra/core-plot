@@ -8,18 +8,13 @@
 
 #import "PlotItem.h"
 
-@interface VerticalBarChart : PlotItem <CPTPlotSpaceDelegate,
-                                        CPTPlotDataSource,
-                                        CPTBarPlotDelegate>
+@interface VerticalBarChart : PlotItem<CPTPlotSpaceDelegate,
+                                       CPTPlotDataSource,
+                                       CPTBarPlotDelegate>
 {
-    CPTLayerAnnotation   *symbolTextAnnotation;
+    CPTPlotSpaceAnnotation *symbolTextAnnotation;
 
-    CGFloat             xShift;
-    CGFloat             yShift;
-
-    CGFloat             labelRotation;
-
-    NSArray             *plotData;
+    NSArray *plotData;
 }
 
 @end

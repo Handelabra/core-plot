@@ -1,20 +1,18 @@
-#import <Foundation/Foundation.h>
 #import "CPTAxis.h"
+#import <Foundation/Foundation.h>
 
 @class CPTConstraints;
 
 @interface CPTXYAxis : CPTAxis {
-@private
-    BOOL isFloatingAxis;
+    @private
     NSDecimal orthogonalCoordinateDecimal;
-	CPTConstraints *axisConstraints;
+    CPTConstraints *axisConstraints;
 }
 
 /// @name Positioning
 /// @{
 @property (nonatomic, readwrite) NSDecimal orthogonalCoordinateDecimal;
 @property (nonatomic, readwrite, retain) CPTConstraints *axisConstraints;
-@property (nonatomic, readwrite) BOOL isFloatingAxis;
 ///	@}
 
 @end

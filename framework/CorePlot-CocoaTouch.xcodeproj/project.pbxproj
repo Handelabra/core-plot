@@ -131,6 +131,8 @@
 		C3392A361225F63B008DA6BD /* CPTNumericData+TypeConversion.m in Sources */ = {isa = PBXBuildFile; fileRef = C3392A351225F63B008DA6BD /* CPTNumericData+TypeConversion.m */; };
 		C3436C4F13F4AC4400739AC2 /* _CPTDarkGradientTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = C3436C4E13F4AC4400739AC2 /* _CPTDarkGradientTheme.m */; };
 		C3436C5113F4AC6000739AC2 /* _CPTSlateTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = C3436C5013F4AC6000739AC2 /* _CPTSlateTheme.h */; settings = {ATTRIBUTES = (); }; };
+		C349DCB0151AAFAB00BFD6A7 /* CPTCalendarFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = C349DCAE151AAFAB00BFD6A7 /* CPTCalendarFormatter.h */; settings = {ATTRIBUTES = (); }; };
+		C349DCB1151AAFAB00BFD6A7 /* CPTCalendarFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = C349DCAF151AAFAB00BFD6A7 /* CPTCalendarFormatter.m */; };
 		C35A65A511025EDF00FE24BB /* CPTPlotArea.h in Headers */ = {isa = PBXBuildFile; fileRef = C35A65A311025EDF00FE24BB /* CPTPlotArea.h */; settings = {ATTRIBUTES = (); }; };
 		C35A65A611025EDF00FE24BB /* CPTPlotArea.m in Sources */ = {isa = PBXBuildFile; fileRef = C35A65A411025EDF00FE24BB /* CPTPlotArea.m */; };
 		C35A65B311025F8A00FE24BB /* CPTGridLines.h in Headers */ = {isa = PBXBuildFile; fileRef = C35A65B111025F8A00FE24BB /* CPTGridLines.h */; settings = {ATTRIBUTES = (); }; };
@@ -153,8 +155,8 @@
 		C3920AD01395B7680045F3BB /* CPTLegend.m in Sources */ = {isa = PBXBuildFile; fileRef = C3920ACE1395B7680045F3BB /* CPTLegend.m */; };
 		C3978E1013CE65C600A420D9 /* NSCoderExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = C3978E0E13CE65C600A420D9 /* NSCoderExtensions.h */; settings = {ATTRIBUTES = (); }; };
 		C3978E1113CE65C600A420D9 /* NSCoderExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C3978E0F13CE65C600A420D9 /* NSCoderExtensions.m */; };
-		C3978E1213CE65EA00A420D9 /* NSExceptionExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CADE5811B18B8700D36017 /* NSExceptionExtensions.m */; };
-		C3978E1313CE65ED00A420D9 /* NSExceptionExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CADE5711B18B8700D36017 /* NSExceptionExtensions.h */; settings = {ATTRIBUTES = (); }; };
+		C3A695E1146A196100AF5653 /* CPTMutablePlotRange.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A695DF146A196100AF5653 /* CPTMutablePlotRange.h */; settings = {ATTRIBUTES = (); }; };
+		C3A695E2146A196100AF5653 /* CPTMutablePlotRange.m in Sources */ = {isa = PBXBuildFile; fileRef = C3A695E0146A196100AF5653 /* CPTMutablePlotRange.m */; };
 		C3B623C0107EC9370009EF0B /* CPTBarPlot.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9B82DA0FB89E610035D8DA /* CPTBarPlot.h */; settings = {ATTRIBUTES = (); }; };
 		C3B623C1107EC9400009EF0B /* CPTDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9B82A30FB89E610035D8DA /* CPTDefinitions.h */; settings = {ATTRIBUTES = (); }; };
 		C3B623C2107EC9430009EF0B /* CPTExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9B82A50FB89E610035D8DA /* CPTExceptions.h */; settings = {ATTRIBUTES = (); }; };
@@ -312,8 +314,12 @@
 		C304565213F4AC9A004D04BC /* _CPTDarkGradientTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _CPTDarkGradientTheme.h; path = Source/_CPTDarkGradientTheme.h; sourceTree = "<group>"; };
 		C30550E71399BE2000E0151F /* CPTLegendEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPTLegendEntry.h; path = Source/CPTLegendEntry.h; sourceTree = "<group>"; };
 		C30550E81399BE2000E0151F /* CPTLegendEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTLegendEntry.m; path = Source/CPTLegendEntry.m; sourceTree = "<group>"; };
+		C3088A04149C2F1200EABCE6 /* footer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html.documentation; name = footer.html; path = ../documentation/doxygen/footer.html; sourceTree = "<group>"; };
+		C3088A05149C2F1200EABCE6 /* customdoxygen.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = customdoxygen.css; path = ../documentation/doxygen/customdoxygen.css; sourceTree = "<group>"; };
+		C3088A06149C2F1200EABCE6 /* header.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html.documentation; name = header.html; path = ../documentation/doxygen/header.html; sourceTree = "<group>"; };
 		C30C85A91047428100181766 /* CPTPlotGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPTPlotGroup.h; path = Source/CPTPlotGroup.h; sourceTree = "<group>"; };
 		C30C85AA1047428100181766 /* CPTPlotGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTPlotGroup.m; path = Source/CPTPlotGroup.m; sourceTree = "<group>"; };
+		C30E97A014B290650012204A /* DoxygenLayout.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = DoxygenLayout.xml; path = ../documentation/doxygen/DoxygenLayout.xml; sourceTree = "<group>"; };
 		C318F4BF11EA18A400595FF9 /* CPTLimitBand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPTLimitBand.h; path = Source/CPTLimitBand.h; sourceTree = "<group>"; };
 		C318F4C011EA18A400595FF9 /* CPTLimitBand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTLimitBand.m; path = Source/CPTLimitBand.m; sourceTree = "<group>"; };
 		C32EE1BB13EC4AF900038266 /* CPTShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPTShadow.h; path = Source/CPTShadow.h; sourceTree = "<group>"; };
@@ -323,8 +329,10 @@
 		C3392A351225F63B008DA6BD /* CPTNumericData+TypeConversion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CPTNumericData+TypeConversion.m"; path = "Source/CPTNumericData+TypeConversion.m"; sourceTree = "<group>"; };
 		C3436C4E13F4AC4400739AC2 /* _CPTDarkGradientTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _CPTDarkGradientTheme.m; path = Source/_CPTDarkGradientTheme.m; sourceTree = "<group>"; };
 		C3436C5013F4AC6000739AC2 /* _CPTSlateTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _CPTSlateTheme.h; path = Source/_CPTSlateTheme.h; sourceTree = "<group>"; };
-		C3566B8C10EED17400FB3866 /* doxygen touch.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "doxygen touch.config"; path = "../documentation/doxygen touch.config"; sourceTree = SOURCE_ROOT; };
-		C3566B8D10EED17400FB3866 /* doxygen-cocoa-touch-tags.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "doxygen-cocoa-touch-tags.xml"; path = "../documentation/doxygen-cocoa-touch-tags.xml"; sourceTree = SOURCE_ROOT; };
+		C349DCAE151AAFAB00BFD6A7 /* CPTCalendarFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPTCalendarFormatter.h; path = Source/CPTCalendarFormatter.h; sourceTree = "<group>"; };
+		C349DCAF151AAFAB00BFD6A7 /* CPTCalendarFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTCalendarFormatter.m; path = Source/CPTCalendarFormatter.m; sourceTree = "<group>"; };
+		C3566B8C10EED17400FB3866 /* doxygen touch.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "doxygen touch.config"; path = "../documentation/doxygen/doxygen touch.config"; sourceTree = SOURCE_ROOT; };
+		C3566B8D10EED17400FB3866 /* doxygen-cocoa-touch-tags.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "doxygen-cocoa-touch-tags.xml"; path = "../documentation/doxygen/doxygen-cocoa-touch-tags.xml"; sourceTree = SOURCE_ROOT; };
 		C3566B8E10EED1B000FB3866 /* mainpage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mainpage.h; path = Source/mainpage.h; sourceTree = "<group>"; };
 		C35A65A311025EDF00FE24BB /* CPTPlotArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPTPlotArea.h; path = Source/CPTPlotArea.h; sourceTree = "<group>"; };
 		C35A65A411025EDF00FE24BB /* CPTPlotArea.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTPlotArea.m; path = Source/CPTPlotArea.m; sourceTree = "<group>"; };
@@ -348,6 +356,8 @@
 		C3920ACE1395B7680045F3BB /* CPTLegend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTLegend.m; path = Source/CPTLegend.m; sourceTree = "<group>"; };
 		C3978E0E13CE65C600A420D9 /* NSCoderExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSCoderExtensions.h; path = Source/NSCoderExtensions.h; sourceTree = "<group>"; };
 		C3978E0F13CE65C600A420D9 /* NSCoderExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSCoderExtensions.m; path = Source/NSCoderExtensions.m; sourceTree = "<group>"; };
+		C3A695DF146A196100AF5653 /* CPTMutablePlotRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPTMutablePlotRange.h; path = Source/CPTMutablePlotRange.h; sourceTree = "<group>"; };
+		C3A695E0146A196100AF5653 /* CPTMutablePlotRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTMutablePlotRange.m; path = Source/CPTMutablePlotRange.m; sourceTree = "<group>"; };
 		C3CADE2F11B1886B00D36017 /* license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = license.txt; path = Source/license.txt; sourceTree = "<group>"; };
 		C3CADE3011B188A800D36017 /* CPTNumericData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPTNumericData.h; path = Source/CPTNumericData.h; sourceTree = "<group>"; };
 		C3CADE3111B188A800D36017 /* CPTNumericData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTNumericData.m; path = Source/CPTNumericData.m; sourceTree = "<group>"; };
@@ -357,8 +367,6 @@
 		C3CADE3A11B188B600D36017 /* CPTNumericDataType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTNumericDataType.m; path = Source/CPTNumericDataType.m; sourceTree = "<group>"; };
 		C3CADE3D11B188C500D36017 /* CPTMutableNumericData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPTMutableNumericData.h; path = Source/CPTMutableNumericData.h; sourceTree = "<group>"; };
 		C3CADE3E11B188C500D36017 /* CPTMutableNumericData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPTMutableNumericData.m; path = Source/CPTMutableNumericData.m; sourceTree = "<group>"; };
-		C3CADE5711B18B8700D36017 /* NSExceptionExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSExceptionExtensions.h; path = Source/NSExceptionExtensions.h; sourceTree = "<group>"; };
-		C3CADE5811B18B8700D36017 /* NSExceptionExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSExceptionExtensions.m; path = Source/NSExceptionExtensions.m; sourceTree = "<group>"; };
 		C3CAFB391229E48200F5C989 /* CPTMutableNumericData+TypeConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CPTMutableNumericData+TypeConversion.h"; path = "Source/CPTMutableNumericData+TypeConversion.h"; sourceTree = "<group>"; };
 		C3CAFB3A1229E48200F5C989 /* CPTMutableNumericData+TypeConversion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CPTMutableNumericData+TypeConversion.m"; path = "Source/CPTMutableNumericData+TypeConversion.m"; sourceTree = "<group>"; };
 		C3CCA04413E8D94800CE6DB1 /* _CPTConstraintsFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _CPTConstraintsFixed.h; path = Source/_CPTConstraintsFixed.h; sourceTree = "<group>"; };
@@ -514,6 +522,8 @@
 		07A2E717102DF9A500809BC5 /* Formatters */ = {
 			isa = PBXGroup;
 			children = (
+				C349DCAE151AAFAB00BFD6A7 /* CPTCalendarFormatter.h */,
+				C349DCAF151AAFAB00BFD6A7 /* CPTCalendarFormatter.m */,
 				07A2E71C102DFAD300809BC5 /* CPTTimeFormatter.h */,
 				07A2E71D102DFAD300809BC5 /* CPTTimeFormatter.m */,
 			);
@@ -539,8 +549,11 @@
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
+			indentWidth = 4;
 			name = CustomTemplate;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
 		};
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
@@ -622,6 +635,8 @@
 				BC9B82A80FB89E610035D8DA /* CPTUtilities.m */,
 				BC9B82AB0FB89E610035D8DA /* CPTPlotRange.h */,
 				BC9B82AC0FB89E610035D8DA /* CPTPlotRange.m */,
+				C3A695DF146A196100AF5653 /* CPTMutablePlotRange.h */,
+				C3A695E0146A196100AF5653 /* CPTMutablePlotRange.m */,
 			);
 			name = "Types and Functions";
 			sourceTree = SOURCE_ROOT;
@@ -635,8 +650,6 @@
 				BC9B82B20FB89E610035D8DA /* NSDecimalNumberExtensions.m */,
 				BC9B82B30FB89E610035D8DA /* NSNumberExtensions.h */,
 				BC9B82B40FB89E610035D8DA /* NSNumberExtensions.m */,
-				C3CADE5711B18B8700D36017 /* NSExceptionExtensions.h */,
-				C3CADE5811B18B8700D36017 /* NSExceptionExtensions.m */,
 			);
 			name = Categories;
 			sourceTree = SOURCE_ROOT;
@@ -687,8 +700,8 @@
 				BC9B82DB0FB89E610035D8DA /* CPTBarPlot.m */,
 				BC74A2C010FC087800E7E90D /* CPTPieChart.h */,
 				BC74A2C110FC087800E7E90D /* CPTPieChart.m */,
-				D0C047BD12D6568500DA8047 /* CPTRangePlot.m */,
 				D0C047BE12D6568500DA8047 /* CPTRangePlot.h */,
+				D0C047BD12D6568500DA8047 /* CPTRangePlot.m */,
 				BC9B82D40FB89E610035D8DA /* CPTScatterPlot.h */,
 				BC9B82D50FB89E610035D8DA /* CPTScatterPlot.m */,
 				0772B4F110E26A12009CD04C /* CPTTradingRangePlot.h */,
@@ -713,6 +726,10 @@
 				C3566B8C10EED17400FB3866 /* doxygen touch.config */,
 				C3566B8E10EED1B000FB3866 /* mainpage.h */,
 				C3566B8D10EED17400FB3866 /* doxygen-cocoa-touch-tags.xml */,
+				C30E97A014B290650012204A /* DoxygenLayout.xml */,
+				C3088A06149C2F1200EABCE6 /* header.html */,
+				C3088A04149C2F1200EABCE6 /* footer.html */,
+				C3088A05149C2F1200EABCE6 /* customdoxygen.css */,
 			);
 			name = Documentation;
 			sourceTree = "<group>";
@@ -801,6 +818,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				C35A66071102723E00FE24BB /* CPTTextStylePlatformSpecific.h in Headers */,
+				BC4FAF29100D7DF300811DD3 /* NSDecimalNumberExtensions.h in Headers */,
+				BCC7EA451006BF5700B39451 /* _CPTPlainBlackTheme.h in Headers */,
+				BCC7EA471006BF5700B39451 /* _CPTPlainWhiteTheme.h in Headers */,
+				BCC7EA491006BF5700B39451 /* _CPTStocksTheme.h in Headers */,
+				C30C85AB1047428100181766 /* CPTPlotGroup.h in Headers */,
+				C40CFB94107EC1B40057E828 /* _CPTXYTheme.h in Headers */,
+				C3B623D3107EC97A0009EF0B /* NSNumberExtensions.h in Headers */,
+				C3B623D4107EC9800009EF0B /* _CPTFillColor.h in Headers */,
+				C3B623D5107EC9820009EF0B /* _CPTFillGradient.h in Headers */,
+				C3B623D6107EC9830009EF0B /* _CPTFillImage.h in Headers */,
+				C35A65B311025F8A00FE24BB /* CPTGridLines.h in Headers */,
+				C35A65BF11025FB300FE24BB /* CPTAxisLabelGroup.h in Headers */,
+				C38DD49711A04B99002A68E7 /* CPTGridLineGroup.h in Headers */,
+				C3CCA04813E8D94800CE6DB1 /* _CPTConstraintsFixed.h in Headers */,
+				C3CCA04A13E8D94800CE6DB1 /* _CPTConstraintsRelative.h in Headers */,
+				C3978E1013CE65C600A420D9 /* NSCoderExtensions.h in Headers */,
+				C3436C5113F4AC6000739AC2 /* _CPTSlateTheme.h in Headers */,
+				C304565313F4AC9A004D04BC /* _CPTDarkGradientTheme.h in Headers */,
 				BC9B83C30FB8AC4B0035D8DA /* CorePlot-CocoaTouch.h in Headers */,
 				070CB8430FC9DED400F3152B /* CPTAxis.h in Headers */,
 				070CB8470FC9DED400F3152B /* CPTAxisSet.h in Headers */,
@@ -861,25 +896,8 @@
 				C3D3AD3413DF8E9D0004EA73 /* CPTLineCap.h in Headers */,
 				C32EE1BD13EC4AF900038266 /* CPTShadow.h in Headers */,
 				C32EE1C813EC4C7200038266 /* CPTMutableShadow.h in Headers */,
-				BC4FAF29100D7DF300811DD3 /* NSDecimalNumberExtensions.h in Headers */,
-				BCC7EA451006BF5700B39451 /* _CPTPlainBlackTheme.h in Headers */,
-				BCC7EA471006BF5700B39451 /* _CPTPlainWhiteTheme.h in Headers */,
-				BCC7EA491006BF5700B39451 /* _CPTStocksTheme.h in Headers */,
-				C30C85AB1047428100181766 /* CPTPlotGroup.h in Headers */,
-				C40CFB94107EC1B40057E828 /* _CPTXYTheme.h in Headers */,
-				C3B623D3107EC97A0009EF0B /* NSNumberExtensions.h in Headers */,
-				C3B623D4107EC9800009EF0B /* _CPTFillColor.h in Headers */,
-				C3B623D5107EC9820009EF0B /* _CPTFillGradient.h in Headers */,
-				C3B623D6107EC9830009EF0B /* _CPTFillImage.h in Headers */,
-				C35A65B311025F8A00FE24BB /* CPTGridLines.h in Headers */,
-				C35A65BF11025FB300FE24BB /* CPTAxisLabelGroup.h in Headers */,
-				C38DD49711A04B99002A68E7 /* CPTGridLineGroup.h in Headers */,
-				C3CCA04813E8D94800CE6DB1 /* _CPTConstraintsFixed.h in Headers */,
-				C3CCA04A13E8D94800CE6DB1 /* _CPTConstraintsRelative.h in Headers */,
-				C3978E1013CE65C600A420D9 /* NSCoderExtensions.h in Headers */,
-				C3978E1313CE65ED00A420D9 /* NSExceptionExtensions.h in Headers */,
-				C3436C5113F4AC6000739AC2 /* _CPTSlateTheme.h in Headers */,
-				C304565313F4AC9A004D04BC /* _CPTDarkGradientTheme.h in Headers */,
+				C3A695E1146A196100AF5653 /* CPTMutablePlotRange.h in Headers */,
+				C349DCB0151AAFAB00BFD6A7 /* CPTCalendarFormatter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -909,7 +927,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "CorePlot-CocoaTouch" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -957,7 +975,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#  Build the doxygen documentation for the project and load the docset into Xcode.\n\n#  Use the following to adjust the value of the $DOXYGEN_PATH User-Defined Setting:\n#    Binary install location: /Applications/Doxygen.app/Contents/Resources/doxygen\n#    Source build install location: /usr/local/bin/doxygen\n\n#  Graphical class diagrams require Graphviz.\n#  Graphviz.app is available free online\n# http://www.graphviz.org/Download_macos.php\n\n#  If the config file doesn't exist, run 'doxygen -g \"${SOURCE_ROOT}/../documentation/doxygen touch.config\"' to \n#   a get default file.\n\nif ! [ -f \"${SOURCE_ROOT}/../documentation/doxygen touch.config\" ] \nthen \n  echo doxygen config file does not exist\n  ${DOXYGEN_PATH} -g \"${SOURCE_ROOT}/../documentation/doxygen touch.config\"\nfi\n\n#  Run doxygen on the updated config file.\n#  Note: doxygen creates a Makefile that does most of the heavy lifting.\n\n${DOXYGEN_PATH} \"${SOURCE_ROOT}/../documentation/doxygen touch.config\"\n\n#  make will invoke docsetutil. Take a look at the Makefile to see how this is done.\n\nmake -C \"${SOURCE_ROOT}/CorePlotTouchDocs.docset/html\" install\n\n#  add publisher info to the docset\n\nfind \"/Users/${USER}/Library/Developer/Shared/Documentation/DocSets/com.CorePlotTouch.Framework.docset/Contents/\" -type f -name Info.plist | xargs perl -pi -e 's/\\<\\/dict\\>/\\t\\<key\\>DocSetPublisherIdentifier\\<\\/key\\>\\n\\t\\<string\\>com.CorePlot.documentation\\<\\/string\\>\\n\\t\\<key\\>DocSetPublisherName\\<\\/key\\>\\n\\t\\<string\\>Core Plot\\<\\/string\\>\\n\\t\\<key\\>NSHumanReadableCopyright\\<\\/key\\>\\n\\t\\<string\\>Copyright © 2011 Core Plot. All rights reserved.\\<\\/string\\>\\n\\<\\/dict\\>\\n/g'\n\n#  Construct a temporary applescript file to tell Xcode to load a docset.\n\nrm -f \"${TEMP_DIR}/loadDocSet.scpt\"\n\necho \"tell application \\\"Xcode\\\"\" >> \"${TEMP_DIR}/loadDocSet.scpt\"\necho \"load documentation set with path \\\"/Users/${USER}/Library/Developer/Shared/Documentation/DocSets/\\\"\" >> \"${TEMP_DIR}/loadDocSet.scpt\"\necho \"end tell\" >> \"${TEMP_DIR}/loadDocSet.scpt\"\n\n#  Run the load-docset applescript command.\n\nosascript \"${TEMP_DIR}/loadDocSet.scpt\"\n\nexit 0";
+			shellScript = "#  Build the doxygen documentation for the project and load the docset into Xcode.\n\n#  Use the following to adjust the value of the $DOXYGEN_PATH User-Defined Setting:\n#    Binary install location: /Applications/Doxygen.app/Contents/Resources/doxygen\n#    Source build install location: /usr/local/bin/doxygen\n\n#  Graphical class diagrams require Graphviz.\n#  Graphviz.app is available free online\n# http://www.graphviz.org/Download_macos.php\n\n#  If the config file doesn't exist, run 'doxygen -g \"${SOURCE_ROOT}/../documentation/doxygen/doxygen touch.config\"' to \n#   a get default file.\n\nif ! [ -f \"${SOURCE_ROOT}/../documentation/doxygen/doxygen touch.config\" ] \nthen \n  echo doxygen config file does not exist\n  ${DOXYGEN_PATH} -g \"${SOURCE_ROOT}/../documentation/doxygen/doxygen touch.config\"\nfi\n\n#  Run doxygen on the updated config file.\n#  Note: doxygen creates a Makefile that does most of the heavy lifting.\n\n${DOXYGEN_PATH} \"${SOURCE_ROOT}/../documentation/doxygen/doxygen touch.config\"\n\n#  make a copy of the html docs\nmkdir -p \"${SOURCE_ROOT}/../documentation/html/iOS\"\ncp -R \"${SOURCE_ROOT}/CorePlotTouchDocs.docset/html/\" \"${SOURCE_ROOT}/../documentation/html/iOS\"\n\n#  make will invoke docsetutil. Take a look at the Makefile to see how this is done.\n\nmake -C \"${SOURCE_ROOT}/CorePlotTouchDocs.docset/html\" install\n\n#  add publisher info to the docset\n\nfind \"/Users/${USER}/Library/Developer/Shared/Documentation/DocSets/com.CorePlotTouch.Framework.docset/Contents/\" -type f -name Info.plist | xargs perl -pi -e 's/\\<\\/dict\\>/\\t\\<key\\>DocSetPublisherIdentifier\\<\\/key\\>\\n\\t\\<string\\>com.CorePlot.documentation\\<\\/string\\>\\n\\t\\<key\\>DocSetPublisherName\\<\\/key\\>\\n\\t\\<string\\>Core Plot\\<\\/string\\>\\n\\t\\<key\\>NSHumanReadableCopyright\\<\\/key\\>\\n\\t\\<string\\>Copyright © 2011 Core Plot. All rights reserved.\\<\\/string\\>\\n\\<\\/dict\\>\\n/g'\n\n#  Construct a temporary applescript file to tell Xcode to load a docset.\n\nrm -f \"${TEMP_DIR}/loadDocSet.scpt\"\n\necho \"tell application \\\"Xcode\\\"\" >> \"${TEMP_DIR}/loadDocSet.scpt\"\necho \"load documentation set with path \\\"/Users/${USER}/Library/Developer/Shared/Documentation/DocSets/\\\"\" >> \"${TEMP_DIR}/loadDocSet.scpt\"\necho \"end tell\" >> \"${TEMP_DIR}/loadDocSet.scpt\"\n\n#  Run the load-docset applescript command.\n\nosascript \"${TEMP_DIR}/loadDocSet.scpt\"\n\nexit 0";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1038,13 +1056,14 @@
 				C3920AD01395B7680045F3BB /* CPTLegend.m in Sources */,
 				C30550EA1399BE2000E0151F /* CPTLegendEntry.m in Sources */,
 				C3978E1113CE65C600A420D9 /* NSCoderExtensions.m in Sources */,
-				C3978E1213CE65EA00A420D9 /* NSExceptionExtensions.m in Sources */,
 				C3D3AD3513DF8E9D0004EA73 /* CPTLineCap.m in Sources */,
 				C3CCA04913E8D94800CE6DB1 /* _CPTConstraintsFixed.m in Sources */,
 				C3CCA04B13E8D94800CE6DB1 /* _CPTConstraintsRelative.m in Sources */,
 				C32EE1BE13EC4AF900038266 /* CPTShadow.m in Sources */,
 				C32EE1C913EC4C7200038266 /* CPTMutableShadow.m in Sources */,
 				C3436C4F13F4AC4400739AC2 /* _CPTDarkGradientTheme.m in Sources */,
+				C3A695E2146A196100AF5653 /* CPTMutablePlotRange.m in Sources */,
+				C349DCB1151AAFAB00BFD6A7 /* CPTCalendarFormatter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1054,193 +1073,24 @@
 		0799D97B137318CF0026072C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = UniversalLibrary;
 			};
 			name = Debug;
 		};
-		0799D97C137318CF0026072C /* Cupcakes */ = {
+		0799D97C137318CF0026072C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = UniversalLibrary;
 			};
-			name = Cupcakes;
-		};
-		343EE71814955336005C843A /* TestFlight */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
-				COPY_PHASE_STRIP = YES;
-				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
-				MACH_O_TYPE = staticlib;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "-falign-loops=16";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
-				SDKROOT = iphoneos;
-				SEPARATE_STRIP = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
-				STRIP_STYLE = debugging;
-				SYMROOT = "$(PROJECT_DIR)/../build";
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = TestFlight;
-		};
-		343EE71914955336005C843A /* TestFlight */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(VALID_ARCHS)";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_SYMBOL_SEPARATION = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				OTHER_CFLAGS = (
-					"-lstdc++",
-					"-falign-loops=16",
-				);
-				OTHER_CPTLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
-				PRODUCT_NAME = "CorePlot-CocoaTouch";
-				SKIP_INSTALL = YES;
-				SYMROOT = "$(PROJECT_DIR)/../build";
-				ZERO_LINK = NO;
-			};
-			name = TestFlight;
-		};
-		343EE71A14955336005C843A /* TestFlight */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DOXYGEN_PATH = /Applications/Doxygen.app/Contents/Resources/doxygen;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				PRODUCT_NAME = Documentation;
-				ZERO_LINK = NO;
-			};
-			name = TestFlight;
-		};
-		343EE71B14955336005C843A /* TestFlight */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				PRODUCT_NAME = UniversalLibrary;
-			};
-			name = TestFlight;
-		};
-		34CFBD51143E3C0800D1E10B /* Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
-				COPY_PHASE_STRIP = YES;
-				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
-				MACH_O_TYPE = staticlib;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "-falign-loops=16";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
-				SDKROOT = iphoneos;
-				SEPARATE_STRIP = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
-				STRIP_STYLE = debugging;
-				SYMROOT = "$(PROJECT_DIR)/../build";
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Distribution;
-		};
-		34CFBD52143E3C0800D1E10B /* Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(VALID_ARCHS)";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_SYMBOL_SEPARATION = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				OTHER_CFLAGS = (
-					"-lstdc++",
-					"-falign-loops=16",
-				);
-				OTHER_CPTLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
-				PRODUCT_NAME = "CorePlot-CocoaTouch";
-				SKIP_INSTALL = YES;
-				SYMROOT = "$(PROJECT_DIR)/../build";
-				ZERO_LINK = NO;
-			};
-			name = Distribution;
-		};
-		34CFBD53143E3C0800D1E10B /* Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DOXYGEN_PATH = /Applications/Doxygen.app/Contents/Resources/doxygen;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				PRODUCT_NAME = Documentation;
-				ZERO_LINK = NO;
-			};
-			name = Distribution;
-		};
-		34CFBD54143E3C0800D1E10B /* Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				PRODUCT_NAME = UniversalLibrary;
-			};
-			name = Distribution;
+			name = Release;
 		};
 		BC9B83480FB8A0A50035D8DA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(VALID_ARCHS)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-lstdc++",
 					"-falign-loops=16",
@@ -1251,19 +1101,16 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "CorePlot-CocoaTouch";
-				SKIP_INSTALL = YES;
 				SYMROOT = "$(PROJECT_DIR)/../build";
 			};
 			name = Debug;
 		};
-		BC9B83490FB8A0A50035D8DA /* Cupcakes */ = {
+		BC9B83490FB8A0A50035D8DA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(VALID_ARCHS)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_SYMBOL_SEPARATION = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_CFLAGS = (
 					"-lstdc++",
 					"-falign-loops=16",
@@ -1274,11 +1121,10 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "CorePlot-CocoaTouch";
-				SKIP_INSTALL = YES;
 				SYMROOT = "$(PROJECT_DIR)/../build";
 				ZERO_LINK = NO;
 			};
-			name = Cupcakes;
+			name = Release;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1310,6 +1156,7 @@
 				);
 				SDKROOT = iphoneos;
 				SEPARATE_STRIP = YES;
+				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = debugging;
 				SYMROOT = "$(PROJECT_DIR)/../build";
@@ -1317,7 +1164,7 @@
 			};
 			name = Debug;
 		};
-		C01FCF5008A954540054247B /* Cupcakes */ = {
+		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
@@ -1348,12 +1195,13 @@
 				);
 				SDKROOT = iphoneos;
 				SEPARATE_STRIP = YES;
+				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = debugging;
 				SYMROOT = "$(PROJECT_DIR)/../build";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Cupcakes;
+			name = Release;
 		};
 		C3566B8110EED04A00FB3866 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1362,22 +1210,20 @@
 				DOXYGEN_PATH = /Applications/Doxygen.app/Contents/Resources/doxygen;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = Documentation;
 			};
 			name = Debug;
 		};
-		C3566B8210EED04A00FB3866 /* Cupcakes */ = {
+		C3566B8210EED04A00FB3866 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DOXYGEN_PATH = /Applications/Doxygen.app/Contents/Resources/doxygen;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = Documentation;
 				ZERO_LINK = NO;
 			};
-			name = Cupcakes;
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1386,45 +1232,37 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0799D97B137318CF0026072C /* Debug */,
-				0799D97C137318CF0026072C /* Cupcakes */,
-				34CFBD54143E3C0800D1E10B /* Distribution */,
-				343EE71B14955336005C843A /* TestFlight */,
+				0799D97C137318CF0026072C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Cupcakes;
+			defaultConfigurationName = Release;
 		};
 		BC9B834A0FB8A0AA0035D8DA /* Build configuration list for PBXNativeTarget "CorePlot-CocoaTouch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BC9B83480FB8A0A50035D8DA /* Debug */,
-				BC9B83490FB8A0A50035D8DA /* Cupcakes */,
-				34CFBD52143E3C0800D1E10B /* Distribution */,
-				343EE71914955336005C843A /* TestFlight */,
+				BC9B83490FB8A0A50035D8DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Cupcakes;
+			defaultConfigurationName = Release;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "CorePlot-CocoaTouch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
-				C01FCF5008A954540054247B /* Cupcakes */,
-				34CFBD51143E3C0800D1E10B /* Distribution */,
-				343EE71814955336005C843A /* TestFlight */,
+				C01FCF5008A954540054247B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Cupcakes;
+			defaultConfigurationName = Release;
 		};
 		C3566B8410EED06800FB3866 /* Build configuration list for PBXAggregateTarget "Documentation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C3566B8110EED04A00FB3866 /* Debug */,
-				C3566B8210EED04A00FB3866 /* Cupcakes */,
-				34CFBD53143E3C0800D1E10B /* Distribution */,
-				343EE71A14955336005C843A /* TestFlight */,
+				C3566B8210EED04A00FB3866 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Cupcakes;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

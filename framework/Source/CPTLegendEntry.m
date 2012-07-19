@@ -2,19 +2,23 @@
 
 #import "CPTPlot.h"
 #import "CPTTextStyle.h"
+#import "CPTUtilities.h"
 #import "NSCoderExtensions.h"
+#import <tgmath.h>
 
-/**	@cond */
+///	@cond
 @interface CPTLegendEntry()
 
-@property (nonatomic, readwrite, assign) CGSize titleSize;
+@property (nonatomic, readonly, retain) NSString *title;
 
 @end
-/**	@endcond */
+
+///	@endcond
 
 #pragma mark -
 
-/**	@brief A graph legend entry.
+/**
+ *	@brief A graph legend entry.
  **/
 @implementation CPTLegendEntry
 
@@ -38,10 +42,14 @@
  **/
 @synthesize column;
 
+///	@cond
+
 /**	@property title
  *	@brief The legend entry title.
  **/
-@synthesize title;
+@dynamic title;
+
+///	@endcond
 
 /**	@property textStyle
  *	@brief The text style used to draw the legend entry title.
@@ -49,33 +57,30 @@
 @synthesize textStyle;
 
 /**	@property titleSize
- *	@brief The size of the legend entry title when drawn using the textStyle.
+ *	@brief The size of the legend entry title when drawn using the @link CPTLegendEntry::textStyle textStyle @endlink.
  **/
-@synthesize titleSize;
+@dynamic titleSize;
 
 #pragma mark -
 #pragma mark Init/Dealloc
 
 -(id)init
 {
-	if ( (self = [super init]) ) {
-		plot = nil;
-		index = 0;
-		row = 0;
-		column = 0;
-		title = nil;
-		textStyle = nil;
-		titleSize = CGSizeZero;
-	}
-	return self;
+    if ( (self = [super init]) ) {
+        plot      = nil;
+        index     = 0;
+        row       = 0;
+        column    = 0;
+        textStyle = nil;
+    }
+    return self;
 }
 
 -(void)dealloc
 {
-	[title release];
-	[textStyle release];
-	
-	[super dealloc];
+    [textStyle release];
+
+    [super dealloc];
 }
 
 #pragma mark -
@@ -83,26 +88,22 @@
 
 -(void)encodeWithCoder:(NSCoder *)coder
 {
-	[coder encodeConditionalObject:self.plot forKey:@"CPTLegendEntry.plot"];
-	[coder encodeInteger:self.index forKey:@"CPTLegendEntry.index"];
-	[coder encodeInteger:self.row forKey:@"CPTLegendEntry.row"];
-	[coder encodeInteger:self.column forKey:@"CPTLegendEntry.column"];
-	[coder encodeObject:self.title forKey:@"CPTLegendEntry.title"];
-	[coder encodeObject:self.textStyle forKey:@"CPTLegendEntry.textStyle"];
-	[coder encodeCPTSize:self.titleSize forKey:@"CPTLegendEntry.titleSize"];
+    [coder encodeConditionalObject:self.plot forKey:@"CPTLegendEntry.plot"];
+    [coder encodeInteger:self.index forKey:@"CPTLegendEntry.index"];
+    [coder encodeInteger:self.row forKey:@"CPTLegendEntry.row"];
+    [coder encodeInteger:self.column forKey:@"CPTLegendEntry.column"];
+    [coder encodeObject:self.textStyle forKey:@"CPTLegendEntry.textStyle"];
 }
 
 -(id)initWithCoder:(NSCoder *)coder
 {
     if ( (self = [super init]) ) {
-		plot = [coder decodeObjectForKey:@"CPTLegendEntry.plot"];
-		index = [coder decodeIntegerForKey:@"CPTLegendEntry.index"];
-		row = [coder decodeIntegerForKey:@"CPTLegendEntry.row"];
-		column = [coder decodeIntegerForKey:@"CPTLegendEntry.column"];
-		title = [[coder decodeObjectForKey:@"CPTLegendEntry.title"] retain];
-		textStyle = [[coder decodeObjectForKey:@"CPTLegendEntry.textStyle"] retain];
-		titleSize = [coder decodeCPTSizeForKey:@"CPTLegendEntry.titleSize"];
-	}
+        plot      = [coder decodeObjectForKey:@"CPTLegendEntry.plot"];
+        index     = [coder decodeIntegerForKey:@"CPTLegendEntry.index"];
+        row       = [coder decodeIntegerForKey:@"CPTLegendEntry.row"];
+        column    = [coder decodeIntegerForKey:@"CPTLegendEntry.column"];
+        textStyle = [[coder decodeObjectForKey:@"CPTLegendEntry.textStyle"] retain];
+    }
     return self;
 }
 
@@ -112,60 +113,68 @@
 /**	@brief Draws the legend title centered vertically in the given rectangle.
  *	@param rect The bounding rectangle where the title should be drawn.
  *	@param context The graphics context to draw into.
+ *  @param scale The drawing scale factor. Must be greater than zero (0).
  **/
--(void)drawTitleInRect:(CGRect)rect inContext:(CGContextRef)context;
+-(void)drawTitleInRect:(CGRect)rect inContext:(CGContextRef)context scale:(CGFloat)scale;
 {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-	CGContextSaveGState(context);
-	CGContextTranslateCTM(context, 0.0, rect.origin.y);
-	CGContextScaleCTM(context, 1.0, -1.0);
-	CGContextTranslateCTM(context, 0.0, -CGRectGetMaxY(rect));
+    CGContextSaveGState(context);
+    CGContextTranslateCTM(context, 0.0, rect.origin.y);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    CGContextTranslateCTM( context, 0.0, -CGRectGetMaxY(rect) );
 #endif
-	// center the title vertically
-	CGRect textRect = rect;
-	CGSize theTitleSize = self.titleSize;
-	if ( theTitleSize.height < textRect.size.height ) {
-		textRect = CGRectInset(textRect, 0.0, (textRect.size.height - theTitleSize.height) / 2.0);
-	}
-	[self.title drawInRect:textRect withTextStyle:self.textStyle inContext:context];
+    // center the title vertically
+    CGRect textRect     = rect;
+    CGSize theTitleSize = self.titleSize;
+    if ( theTitleSize.height < textRect.size.height ) {
+        CGFloat offset = (textRect.size.height - theTitleSize.height) / (CGFloat)2.0;
+        if ( scale == 1.0 ) {
+            offset = round(offset);
+        }
+        else {
+            offset = round(offset * scale) / scale;
+        }
+        textRect = CGRectInset(textRect, 0.0, offset);
+    }
+    CPTAlignRectToUserSpace(context, textRect);
+    [self.title drawInRect:textRect withTextStyle:self.textStyle inContext:context];
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-	CGContextRestoreGState(context);
+    CGContextRestoreGState(context);
 #endif
 }
 
 #pragma mark -
 #pragma mark Accessors
 
--(void)setTitle:(NSString *)newTitle
-{
-	if ( newTitle != title ) {
-		[title release];
-		title = [newTitle retain];
-		self.titleSize = CGSizeZero;
-	}
-}
+///	@cond
 
 -(void)setTextStyle:(CPTTextStyle *)newTextStyle
 {
-	if ( newTextStyle != textStyle ) {
-		[textStyle release];
-		textStyle = [newTextStyle retain];
-		self.titleSize = CGSizeZero;
-	}
+    if ( newTextStyle != textStyle ) {
+        [textStyle release];
+        textStyle = [newTextStyle retain];
+    }
+}
+
+-(NSString *)title
+{
+    return [self.plot titleForLegendEntryAtIndex:self.index];
 }
 
 -(CGSize)titleSize
 {
-	if ( CGSizeEqualToSize(titleSize, CGSizeZero) ) {
-		NSString *theTitle = self.title;
-		CPTTextStyle *theTextStyle = self.textStyle;
-		
-		if ( theTitle && theTextStyle ) {
-			titleSize = [theTitle sizeWithTextStyle:theTextStyle];
-		}
-	}
+    CGSize theTitleSize = CGSizeZero;
 
-	return titleSize;
+    NSString *theTitle         = self.title;
+    CPTTextStyle *theTextStyle = self.textStyle;
+
+    if ( theTitle && theTextStyle ) {
+        theTitleSize = [theTitle sizeWithTextStyle:theTextStyle];
+    }
+
+    return theTitleSize;
 }
+
+///	@endcond
 
 @end
